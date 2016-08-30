@@ -5,6 +5,12 @@ var theQuery = document.getElementById('q-input'); // the HTML item that the use
 var theSuggestions = document.getElementById('q-suggestions'); // the HTML list that will display search suggestions
 
 theQuery.addEventListener('input', displaySuggestions);
+document.body.addEventListener('click', handleClick);
+
+function handleClick (clicked) {
+  var what = clicked.target.getAttribute('data-action');
+  if (what) { alert(what); }
+}
 
 function clear(element) {
   while(element.firstChild) {
@@ -14,7 +20,7 @@ function clear(element) {
 
 function displaySuggestions() {
   var value = theQuery.value.toLowerCase();
-  var matches = [];
+  matches = [];
 
   if (value !== '') {
     for (var item in animals) {
@@ -28,15 +34,18 @@ function displaySuggestions() {
 
   clear(theSuggestions);
 
-  matches.sort(function(a,b) {
+  matches.sort(); // sort alphabtically
+  matches.sort(function(a,b) { // and then by how soon our query appears
     return (a.toLowerCase().indexOf(value) - b.toLowerCase().indexOf(value));
   });
 
   for (var j = 0; j < matches.length && j < 10; j++) {
-    var theSuggestion = document.createElement('li');
-    theSuggestion.classList.add('list-group-item');
-    theSuggestion.textContent = matches[j];
-    theSuggestions.appendChild(theSuggestion);
+    if (!((matches.length === 1) && (matches[0].toLowerCase() === value))) {
+      var theSuggestion = document.createElement('li');
+      theSuggestion.classList.add('list-group-item');
+      theSuggestion.textContent = matches[j];
+      theSuggestions.appendChild(theSuggestion);
+    }
   }
 }
 
