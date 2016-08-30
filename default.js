@@ -3,13 +3,53 @@ var imgHTML = '<img alt=\"140x140\" class=\"img-circle\" src=\"data:image\/svg+x
 var query = ''; // a variable that will hold the current search query
 var theQuery = document.getElementById('q-input'); // the HTML item that the user will type in
 var theSuggestions = document.getElementById('q-suggestions'); // the HTML list that will display search suggestions
+var theSearch = document.getElementById('search');
+
+theSearch.setAttribute('data-action', 'search');
 
 theQuery.addEventListener('input', displaySuggestions);
 document.body.addEventListener('click', handleClick);
 
 function handleClick (clicked) {
-  var what = clicked.target.getAttribute('data-action');
-  if (what) { alert(what); }
+  var what = '';
+  var content = '';
+  var target = clicked.target;
+
+  if (target.hasAttribute('data-action')) {
+    what = target.getAttribute('data-action');
+  }
+
+  if (target.hasAttribute('data-content')) {
+    var content = target.getAttribute('data-content');
+  }
+
+  switch (what) {
+    case 'setQuery':
+      setQuery(content);
+      break;
+    case 'search':
+      if (content === '') { content = theQuery.value };
+      search(content);
+      break;
+  }
+}
+
+function search(content) {
+  var cleaned = shelters;
+
+  for (var shelter in cleaned) {
+    cleaned[shelter].pets = cleaned[shelter].pets.filter( function (value) {
+      return (value.breed.toLowerCase() === content.toLowerCase());
+    });
+  }
+
+  display(cleaned);
+}
+
+function setQuery(content) {
+    theQuery.value = content;
+    query = content;
+    clear(theSuggestions);
 }
 
 function clear(element) {
@@ -43,14 +83,18 @@ function displaySuggestions() {
     if (!((matches.length === 1) && (matches[0].toLowerCase() === value))) {
       var theSuggestion = document.createElement('li');
       theSuggestion.classList.add('list-group-item');
+      theSuggestion.setAttribute('data-action', 'setQuery');
+      theSuggestion.setAttribute('data-content', matches[j]);
       theSuggestion.textContent = matches[j];
       theSuggestions.appendChild(theSuggestion);
     }
   }
 }
 
-var display = function (shelters) {
+function display (shelters) {
   var theResults = document.getElementById('results');
+
+  clear(theResults);
 
   var count = 0;
 
@@ -118,4 +162,4 @@ function createPanel (shelter, pet) {
   return theRow;
 }
 
-display(shelters);
+// display(shelters);
