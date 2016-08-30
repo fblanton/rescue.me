@@ -16,5 +16,10 @@ body {
 
 .entry hr {
   margin-top: 0;
-  margin-bottom: 0;
+  margin-bottom: 5px;
+}
+
+.panel.panel-default {
+  border: none;
+  background-color: rgba(200,200,200,.1);
 }
