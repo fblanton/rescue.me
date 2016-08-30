@@ -28,16 +28,16 @@ function handleClick (clicked) {
       setQuery(content);
       break;
     case 'showBreed':
+      for (i = 0; i < filters.length; i++) {
+        if (filters[i].type === 'breed') {
+          filters.splice(i, 1);
+        }
+      }
       if (content === '') { content = theQuery.value };
       if (content !== '') {
         filters.push({type: 'breed', value: content});
-      } else {
-        for (i = 0; i < filters.length; i++) {
-          if (filters[i].type === 'breed') {
-            filters.splice(i, 1);
-          }
-        }
       }
+      
       display(shelters);
       break;
   }
