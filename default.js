@@ -8,74 +8,7 @@ var display = function (shelters) {
 
   for (var i = 0; i < shelters.length; i++) {
     for (j = 0; j < shelters[i].pets.length; j++) {
-      var theRow = document.createElement('div');
-      theRow.classList.add('col-md-4', 'entry');
-      var thePanel = document.createElement('div'); // create a div for the resulting item
-      thePanel.classList.add('panel','panel-default');
-
-      var thePanelBody = document.createElement('div');
-      thePanelBody.classList.add('panel-body');
-      thePanel.appendChild(thePanelBody);
-
-      var theImageRow = document.createElement('div');
-      theImageRow.classList.add('row', 'center-contents');
-      theImageRow.innerHTML = imgHTML;
-      thePanelBody.appendChild(theImageRow);
-
-      var thePetName = document.createElement('h5');
-      thePetName.textContent = shelters[i].pets[j].name;
-      thePetName.classList.add('center-contents');
-      thePanelBody.appendChild(thePetName);
-
-      var theHR = document.createElement('hr');
-      thePanelBody.appendChild(theHR);
-
-      var theBreed = document.createElement('p');
-      theBreed.textContent = shelters[i].pets[j].breed;
-      thePanelBody.appendChild(theBreed);
-
-      var theAgeGenderSize = document.createElement('p');
-      theAgeGenderSize.textContent =
-      parseInt(shelters[i].pets[j].age/12) + ' yrs '
-      + parseInt(shelters[i].pets[j].age%12) + ' mos | '
-      + shelters[i].pets[j].gender + ' | '
-      + 'small'; // temp until data includes weight
-      // shelters[i].pets[j].weight + ' | ';
-      thePanelBody.appendChild(theAgeGenderSize);
-
-      var theRescueName = document.createElement('p');
-      theRescueName.textContent = shelters[i].name;
-      thePanelBody.appendChild(theRescueName);
-
-      var theCityState = document.createElement('p');
-      theCityState.textContent =
-      shelters[i].address.city + ' '
-      + shelters[i].address.state;
-      thePanelBody.appendChild(theCityState);
-
-      theRow.appendChild(thePanel);
-
-      // theEntry = document.createElement('div'); // create a div to hold the animals info
-      // theEntry.classList.add('col-lg-9');
-      //
-      // var theName = document.createElement('h1');
-      // theName.textContent =  shelters[i].pets[j].name;
-      // theEntry.appendChild(theName);
-      //
-      // var theAge = document.createElement('em');
-      // theAge.textContent = shelters[i].pets[j].age + ' month old ';
-      // theEntry.appendChild(theAge);
-      //
-      // var theGender = document.createElement('em');
-      // theGender.textContent = shelters[i].pets[j].gender;
-      // theEntry.appendChild(theGender);
-      //
-      // var theDescription = document.createElement('div');
-      // theDescription.classList.add('voffset');
-      // theDescription.textContent = shelters[i].pets[j].description;
-      // theEntry.appendChild(theDescription);
-      //
-      // theRow.appendChild(theEntry);
+      var theRow = createPanel(shelters[i], j);
       theResults.appendChild(theRow);
       count++;
     }
@@ -84,6 +17,57 @@ var display = function (shelters) {
   theEntry = document.createElement('div');
   theEntry.textContent = count;
   theResults.appendChild(theEntry);
+}
+
+function createPanel (shelter, pet) {
+  var theRow = document.createElement('div');  // create a div for the resulting item
+  theRow.classList.add('col-md-4', 'entry');
+  var thePanel = document.createElement('div');
+  thePanel.classList.add('panel','panel-default');
+
+  var thePanelBody = document.createElement('div');
+  thePanelBody.classList.add('panel-body');
+  thePanel.appendChild(thePanelBody);
+
+  var theImageRow = document.createElement('div');
+  theImageRow.classList.add('row', 'center-contents');
+  theImageRow.innerHTML = imgHTML;
+  thePanelBody.appendChild(theImageRow);
+
+  var thePetName = document.createElement('h5');
+  thePetName.textContent = shelter.pets[pet].name;
+  thePetName.classList.add('center-contents');
+  thePanelBody.appendChild(thePetName);
+
+  var theHR = document.createElement('hr');
+  thePanelBody.appendChild(theHR);
+
+  var theBreed = document.createElement('p');
+  theBreed.textContent = shelter.pets[pet].breed;
+  thePanelBody.appendChild(theBreed);
+
+  var theAgeGenderSize = document.createElement('p');
+  theAgeGenderSize.textContent =
+  parseInt(shelter.pets[pet].age/12) + ' yrs '
+  + parseInt(shelter.pets[pet].age%12) + ' mos | '
+  + shelter.pets[pet].gender + ' | '
+  + 'small'; // temp until data includes weight
+  // shelters[i].pets[j].weight + ' | ';
+  thePanelBody.appendChild(theAgeGenderSize);
+
+  var theRescueName = document.createElement('p');
+  theRescueName.textContent = shelter.name;
+  thePanelBody.appendChild(theRescueName);
+
+  var theCityState = document.createElement('p');
+  theCityState.textContent =
+  shelter.address.city + ' '
+  + shelter.address.state;
+
+  thePanelBody.appendChild(theCityState);
+  theRow.appendChild(thePanel);
+
+  return theRow;
 }
 
 display(shelters);
