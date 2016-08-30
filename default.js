@@ -1,11 +1,11 @@
 var shelters = JSON.parse(data);
 var imgHTML = '<img alt=\"140x140\" class=\"img-circle\" src=\"data:image\/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9InllcyI\/PjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iMTQwIiBoZWlnaHQ9IjE0MCIgdmlld0JveD0iMCAwIDE0MCAxNDAiIHByZXNlcnZlQXNwZWN0UmF0aW89Im5vbmUiPjwhLS0KU291cmNlIFVSTDogaG9sZGVyLmpzLzE0MHgxNDAKQ3JlYXRlZCB3aXRoIEhvbGRlci5qcyAyLjYuMC4KTGVhcm4gbW9yZSBhdCBodHRwOi8vaG9sZGVyanMuY29tCihjKSAyMDEyLTIwMTUgSXZhbiBNYWxvcGluc2t5IC0gaHR0cDovL2ltc2t5LmNvCi0tPjxkZWZzPjxzdHlsZSB0eXBlPSJ0ZXh0L2NzcyI+PCFbQ0RBVEFbI2hvbGRlcl8xNTZkODRiYjUzMiB0ZXh0IHsgZmlsbDojQUFBQUFBO2ZvbnQtd2VpZ2h0OmJvbGQ7Zm9udC1mYW1pbHk6QXJpYWwsIEhlbHZldGljYSwgT3BlbiBTYW5zLCBzYW5zLXNlcmlmLCBtb25vc3BhY2U7Zm9udC1zaXplOjEwcHQgfSBdXT48L3N0eWxlPjwvZGVmcz48ZyBpZD0iaG9sZGVyXzE1NmQ4NGJiNTMyIj48cmVjdCB3aWR0aD0iMTQwIiBoZWlnaHQ9IjE0MCIgZmlsbD0iI0VFRUVFRSIvPjxnPjx0ZXh0IHg9IjQ0LjY4NzUiIHk9Ijc0LjM2NDA2MjUiPjE0MHgxNDA8L3RleHQ+PC9nPjwvZz48L3N2Zz4=\" data-holder-rendered=\"true\" style=\"width: 140px; height: 140px;\">'; // temporary gray image as a placeholder until images are addded to the data
-var query = ''; // a variable that will hold the current search query
+var filters = []; // a variable that will hold the current search query
 var theQuery = document.getElementById('q-input'); // the HTML item that the user will type in
 var theSuggestions = document.getElementById('q-suggestions'); // the HTML list that will display search suggestions
 var theSearch = document.getElementById('search');
 
-theSearch.setAttribute('data-action', 'search');
+theSearch.setAttribute('data-action', 'showBreed');
 
 theQuery.addEventListener('input', displaySuggestions);
 document.body.addEventListener('click', handleClick);
@@ -27,23 +27,20 @@ function handleClick (clicked) {
     case 'setQuery':
       setQuery(content);
       break;
-    case 'search':
+    case 'showBreed':
       if (content === '') { content = theQuery.value };
-      search(content);
+      if (content !== '') {
+        filters.push({type: 'breed', value: content});
+      } else {
+        for (i = 0; i < filters.length; i++) {
+          if (filters[i].type === 'breed') {
+            filters.splice(i, 1);
+          }
+        }
+      }
+      display(shelters);
       break;
   }
-}
-
-function search(content) {
-  var cleaned = shelters;
-
-  for (var shelter in cleaned) {
-    cleaned[shelter].pets = cleaned[shelter].pets.filter( function (value) {
-      return (value.breed.toLowerCase() === content.toLowerCase());
-    });
-  }
-
-  display(cleaned);
 }
 
 function setQuery(content) {
@@ -100,15 +97,30 @@ function display (shelters) {
 
   for (var i = 0; i < shelters.length; i++) {
     for (j = 0; j < shelters[i].pets.length; j++) {
-      var theRow = createPanel(shelters[i], j);
-      theResults.appendChild(theRow);
-      count++;
+      if (shouldDisplay(i, j)) {
+        var theRow = createPanel(shelters[i], j);
+        theResults.appendChild(theRow);
+        count++;
+      }
     }
   }
 
   theEntry = document.createElement('div');
   theEntry.textContent = count;
   theResults.appendChild(theEntry);
+}
+
+function shouldDisplay(shelter, pet) {
+  var should = true;
+
+  for (var i = 0; i < filters.length; i++) {
+    switch (filters[i].type) {
+      case 'breed':
+        should = (shelters[shelter].pets[pet].breed.toLowerCase() === filters[i].value.toLowerCase());
+    }
+  }
+
+  return should;
 }
 
 function createPanel (shelter, pet) {
@@ -162,4 +174,4 @@ function createPanel (shelter, pet) {
   return theRow;
 }
 
-// display(shelters);
+display(shelters);
