@@ -19,7 +19,13 @@
         <div class="col-lg-1"></div>
         <div class="col-lg-10">
           <div class="input-group">
-            <input type="input" class="form-control" placeholder="Search Available Breeds">
+            <div id="query">
+              <input id="q-input" type="input" class="form-control" placeholder="Search Available Breeds">
+              <ul id="q-suggestions" class="list-group">
+                <li class="list-group-item">1</li>
+                <li class="list-group-item">2</li>
+              </ul>
+            </div>
             <span class="input-group-btn">
               <button class="btn btn-default" type="button">Search</button>
             </span>
