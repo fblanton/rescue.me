@@ -16,15 +16,21 @@ function displaySuggestions() {
   var value = theQuery.value.toLowerCase();
   var matches = [];
 
-  for (var item in animals) {
-    for (var i = 0; i < animals[item].breeds.length; i++) {
-      if (animals[item].breeds[i].toLowerCase().indexOf(value) !== -1) {
-        matches.push(animals[item].breeds[i]);
+  if (value !== '') {
+    for (var item in animals) {
+      for (var i = 0; i < animals[item].breeds.length; i++) {
+        if (animals[item].breeds[i].toLowerCase().indexOf(value) !== -1) {
+          matches.push(animals[item].breeds[i]);
+        }
       }
     }
   }
 
   clear(theSuggestions);
+
+  matches.sort(function(a,b) {
+    return (a.toLowerCase().indexOf(value) - b.toLowerCase().indexOf(value));
+  });
 
   for (var j = 0; j < matches.length && j < 10; j++) {
     var theSuggestion = document.createElement('li');
