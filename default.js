@@ -1,18 +1,18 @@
-var shelters = JSON.parse(data);
 var imgHTML = '<img alt=\"140x140\" class=\"img-circle\" src=\"data:image\/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9InllcyI\/PjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iMTQwIiBoZWlnaHQ9IjE0MCIgdmlld0JveD0iMCAwIDE0MCAxNDAiIHByZXNlcnZlQXNwZWN0UmF0aW89Im5vbmUiPjwhLS0KU291cmNlIFVSTDogaG9sZGVyLmpzLzE0MHgxNDAKQ3JlYXRlZCB3aXRoIEhvbGRlci5qcyAyLjYuMC4KTGVhcm4gbW9yZSBhdCBodHRwOi8vaG9sZGVyanMuY29tCihjKSAyMDEyLTIwMTUgSXZhbiBNYWxvcGluc2t5IC0gaHR0cDovL2ltc2t5LmNvCi0tPjxkZWZzPjxzdHlsZSB0eXBlPSJ0ZXh0L2NzcyI+PCFbQ0RBVEFbI2hvbGRlcl8xNTZkODRiYjUzMiB0ZXh0IHsgZmlsbDojQUFBQUFBO2ZvbnQtd2VpZ2h0OmJvbGQ7Zm9udC1mYW1pbHk6QXJpYWwsIEhlbHZldGljYSwgT3BlbiBTYW5zLCBzYW5zLXNlcmlmLCBtb25vc3BhY2U7Zm9udC1zaXplOjEwcHQgfSBdXT48L3N0eWxlPjwvZGVmcz48ZyBpZD0iaG9sZGVyXzE1NmQ4NGJiNTMyIj48cmVjdCB3aWR0aD0iMTQwIiBoZWlnaHQ9IjE0MCIgZmlsbD0iI0VFRUVFRSIvPjxnPjx0ZXh0IHg9IjQ0LjY4NzUiIHk9Ijc0LjM2NDA2MjUiPjE0MHgxNDA8L3RleHQ+PC9nPjwvZz48L3N2Zz4=\" data-holder-rendered=\"true\" style=\"width: 140px; height: 140px;\">'; // temporary gray image as a placeholder until images are addded to the data
+
+var shelters = JSON.parse(data);
 var filters = []; // a variable that will hold the current search query
-var theQuery = document.getElementById('q-input'); // the HTML item that the user will type in
-var theSuggestions = document.getElementById('q-suggestions'); // the HTML list that will display search suggestions
+var theQuery = document.getElementById('q-input');
+var theSuggestions = document.getElementById('q-suggestions');
 var theSearch = document.getElementById('search');
 var initMap = true;
 var theMap = {};
 var resultsView = 'results';
 
 theSearch.setAttribute('data-action', 'showBreed');
+theQuery.addEventListener('input', displaySuggestions);
 
 document.getElementById('logo').setAttribute('data-action', 'showHero');
-
-theQuery.addEventListener('input', displaySuggestions);
 document.body.addEventListener('click', handleClick);
 
 function handleClick (clicked) {
@@ -88,7 +88,7 @@ function showShelter(id) {
   //add a filter that will only show animals from the passed shelter id
   filters.push({type: 'shelter', value: id});
 
-   // show the shelter div on the page and display the shelter-info header
+  // show the shelter div on the page and display the shelter-info header
   view('shelter');
   document.getElementById('shelter-info').classList.remove('hidden');
 
@@ -236,7 +236,8 @@ function display (where, shelters) {
 function shouldDisplay(shelter, pet) {
   var should = true;
 
-  for (var i = 0; i < filters.length; i++) {
+  // Iterate through the filters array, perform an && operation on the current value of the should variable along with a comparison operation to see if the current pet should be displayed. If any case fails the item should not be display and should becomes false. At that point we can exit the loop.
+  for (var i = 0; (i < filters.length) && should; i++) {
     switch (filters[i].type) {
       case 'breed':
         should = (should && (shelters[shelter].pets[pet].breed.toLowerCase() === filters[i].value.toLowerCase()));
