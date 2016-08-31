@@ -46,6 +46,9 @@ function handleClick (clicked) {
     case 'showHero':
       showHero();
       break;
+    case 'showShelter':
+      alert(content);
+      break;
   }
 }
 
@@ -174,14 +177,17 @@ function createPanel (shelter, pet) {
   theAgeGenderSize.textContent =
   parseInt(shelter.pets[pet].age/12) + ' yrs '
   + parseInt(shelter.pets[pet].age%12) + ' mos | '
-  + shelter.pets[pet].gender + ' | '
-  + 'small'; // temp until data includes weight
-  // shelters[i].pets[j].weight + ' | ';
+  + shelter.pets[pet].gender;
+  // + ' | ' + shelters[i].pets[j].weight;
   thePanelBody.appendChild(theAgeGenderSize);
 
-  var theRescueName = document.createElement('p');
+  var theRescueParagraph = document.createElement('p');
+  var theRescueName = document.createElement('a');
+  theRescueName.setAttribute('data-action', 'showShelter');
+  theRescueName.setAttribute('data-content', shelter.id);
   theRescueName.textContent = shelter.name;
-  thePanelBody.appendChild(theRescueName);
+  theRescueParagraph.appendChild(theRescueName);
+  thePanelBody.appendChild(theRescueParagraph);
 
   var theCityState = document.createElement('p');
   theCityState.textContent =
