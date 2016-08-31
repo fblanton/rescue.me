@@ -7,23 +7,25 @@ var theSearch = document.getElementById('search');
 
 theSearch.setAttribute('data-action', 'showBreed');
 
+document.getElementById('logo').setAttribute('data-action', 'showHero');
+
 theQuery.addEventListener('input', displaySuggestions);
 document.body.addEventListener('click', handleClick);
 
 function handleClick (clicked) {
-  var what = '';
+  var action = '';
   var content = '';
   var target = clicked.target;
 
   if (target.hasAttribute('data-action')) {
-    what = target.getAttribute('data-action');
+    action = target.getAttribute('data-action');
   }
 
   if (target.hasAttribute('data-content')) {
     var content = target.getAttribute('data-content');
   }
 
-  switch (what) {
+  switch (action) {
     case 'setQuery':
       setQuery(content);
       break;
@@ -37,10 +39,28 @@ function handleClick (clicked) {
       if (content !== '') {
         filters.push({type: 'breed', value: content});
       }
-      
+
+      hideHero();
       display(shelters);
       break;
+    case 'showHero':
+      showHero();
+      break;
   }
+}
+
+function hideHero() {
+  var theHero = document.getElementById('hero');
+  theHero.classList.add('hidden');
+  var theHeader = document.getElementById('header');
+  theHeader.classList.remove('heroed');
+}
+
+function showHero() {
+  theHero = document.getElementById('hero');
+  theHero.classList.remove('hidden');
+  var theHeader = document.getElementById('header');
+  theHeader.classList.add('heroed');
 }
 
 function setQuery(content) {
