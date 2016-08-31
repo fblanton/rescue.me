@@ -63,6 +63,10 @@ body {
   top: 50vh;
 }
 
+#map {
+  height: 180px;
+}
+
 video {
   position: absolute;
   top: 50%;

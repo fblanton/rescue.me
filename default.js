@@ -47,11 +47,61 @@ function handleClick (clicked) {
       showHero();
       break;
     case 'showShelter':
-      alert(content);
+      showShelter(content);
       break;
   }
 }
 
+function view(show) {
+  var theViews = document.getElementById('views');
+  var theOld = theViews.getElementsByClassName('active')[0];
+
+  if (theOld.id !== show) {
+    theOld.classList.remove('active');
+    theOld.classList.add('hidden');
+  }
+
+  document.getElementById(show).classList.remove('hidden');
+  document.getElementById(show).classList.add('active');
+
+}
+
+function showShelter(id) {
+  view('shelter');
+  var shelter;
+
+  for (var i = 0; i < shelters.length; i++) {
+    if (shelters[i].id === id) {
+      shelter = shelters[i];
+      i = shelters.length;
+    }
+  }
+
+  if (shelter) {
+    var lat = shelter.latitude;
+    var long = shelter.longitude;
+
+    var theMap = showMap('map', lat, long);
+    var marker = L.marker([lat, long]).addTo(theMap);
+    marker.bindPopup(shelter.name).openPopup();
+  }
+}
+
+// add a leafletjs map to a given element with id matching passed id
+function showMap(id, lat, long) {
+  var theMap = L.map(id).setView([lat, long], 15);
+
+  L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+    attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
+    maxZoom: 18,
+    id: 'fblanton.19653a9c',
+    accessToken: 'pk.eyJ1IjoiZmJsYW50b24iLCJhIjoiY2lzamNid2M1MDI3ODJ6b2Npd215Nm4xbSJ9.mgpAAP0NC5HRxKmfyP-eOQ'
+  }).addTo(theMap);
+
+  return theMap;
+}
+
+// Need to be able to show and hide our hero elements on demand
 function hideHero() {
   var theHero = document.getElementById('hero');
   theHero.classList.add('hidden');

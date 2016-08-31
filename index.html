@@ -3,7 +3,10 @@
   <head>
     <meta charset="utf-8">
     <link rel="stylesheet" href="default.css">
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://npmcdn.com/leaflet@1.0.0-rc.3/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+    <script src="https://npmcdn.com/leaflet@1.0.0-rc.3/dist/leaflet.js"></script>
     <title>rescue.me</title>
   </head>
   <body>
@@ -30,13 +33,27 @@
           </div>
         </div>
       </div>
-      <div class="row voffset3">
-        <div class="col-lg-12 ">
-          <div id="results">
+      <div id="views">
+          <div id="search-breed" class="active">
+            <div class="row voffset3">
+              <div class="col-lg-12 ">
+                <div id="results">
 
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
+          <div id="shelter" class="hidden">
+            <div class="row voffset3">
+              <div class="col-lg-12">
+                <div id="shelterInfo">
+                   <div id="map"></div>
+                </div>
+              </div>
+            </div>
+          </div>
       </div>
+
     </div>
     <script src="data.js"></script>
     <script src="default.js"></script>
