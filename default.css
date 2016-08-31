@@ -63,6 +63,15 @@ body {
   top: 50vh;
 }
 
+#map {
+  height: 400px;
+}
+
+#shelter-info {
+  margin-left: -15px;
+  margin-right: -15px;
+}
+
 video {
   position: absolute;
   top: 50%;
