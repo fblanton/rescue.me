@@ -2,43 +2,40 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <link rel="stylesheet" href="default.css">
+    <link rel="stylesheet" href="default2.css">
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     <title>rescue.me</title>
   </head>
   <body>
     <div class="container-fluid">
       <div class="row">
-        <div class="col-lg-1"></div>
-        <div class="col-lg-10">
-          <h1>rescue.me</h1>
+        <div id="hero">
+          <video id="hero-video" src="./vids/cat_in_the_sun.mp4" autoplay loop>
+
+          </video>
         </div>
-        <div class="col-lg-1"></div>
-      </div>
-      <div class="row">
-        <div class="col-lg-1"></div>
-        <div class="col-lg-10">
-          <div class="input-group">
-            <div id="query">
-              <input id="q-input" type="input" class="form-control" placeholder="Search Available Breeds">
-              <ul id="q-suggestions" class="list-group">
-              </ul>
+        <div id="header" class="col-xs-12">
+          <div id="header-content">
+            <div class="col-xs-1"></div>
+              <h1 class="col-xs-11">rescue.me</h1>
+            <div class="col-xs-1"></div>
+            <div class="col-xs-10">
+              <div id="query">
+                <input id="q-input" type="input" class="form-control" placeholder="Search Available Breeds">
+                <ul id="q-suggestions" class="list-group">
+                </ul>
+              </div>
+              <p><a id="search" class="btn btn-primary btn-lg voffset" href="#" role="button">Search</a></p>
             </div>
-            <span class="input-group-btn">
-              <button id="search" class="btn btn-default" type="button">Search</button>
-            </span>
           </div>
         </div>
-        <div class="col-lg-1"></div>
       </div>
       <div class="row voffset3">
-        <div class="col-lg-2"></div>
-        <div class="col-lg-8">
+        <div class="col-lg-12 lower">
           <div id="results">
 
           </div>
         </div>
-        <div class="col-lg-2"></div>
       </div>
     </div>
     <script src="data.js"></script>
