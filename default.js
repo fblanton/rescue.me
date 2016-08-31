@@ -4,6 +4,9 @@ var filters = []; // a variable that will hold the current search query
 var theQuery = document.getElementById('q-input'); // the HTML item that the user will type in
 var theSuggestions = document.getElementById('q-suggestions'); // the HTML list that will display search suggestions
 var theSearch = document.getElementById('search');
+var initMap = true;
+var theMap = {};
+var resultsView = 'results';
 
 theSearch.setAttribute('data-action', 'showBreed');
 
@@ -41,13 +44,20 @@ function handleClick (clicked) {
       }
 
       hideHero();
-      display(shelters);
+      display(resultsView, shelters);
       break;
     case 'showHero':
       showHero();
       break;
     case 'showShelter':
       showShelter(content);
+      resultsView = 'shelter-results';
+      display(resultsView, shelters);
+      break;
+    case 'exitShelter':
+      hideShelter();
+      resultsView = 'results';
+      display(resultsView, shelters);
       break;
   }
 }
@@ -63,13 +73,39 @@ function view(show) {
 
   document.getElementById(show).classList.remove('hidden');
   document.getElementById(show).classList.add('active');
+}
 
+function hideShelter () {
+  filters = filters.filter(function (a) {
+    return a.type !== 'shelter';
+  })
+  document.getElementById('back').remove();
+  view('search-breed');
+  document.getElementById('shelter-info').classList.add('hidden');
 }
 
 function showShelter(id) {
-  view('shelter');
-  var shelter;
+  //add a filter that will only show animals from the passed shelter id
+  filters.push({type: 'shelter', value: id});
 
+   // show the shelter div on the page and display the shelter-info header
+  view('shelter');
+  document.getElementById('shelter-info').classList.remove('hidden');
+
+  // check to see if a back element exists and creat it if it does not
+  var theLogo = document.getElementById('logo');
+  if (document.getElementById('back')) { } // do nothing
+  else { // create a back element and append it to the logo text
+    var theBack = document.createElement('span');
+    theBack.id = 'back';
+    theBack.classList.add('small');
+    theBack.textContent = ' – back';
+    theBack.setAttribute('data-action', 'exitShelter');
+    theLogo.appendChild(theBack);
+  }
+
+  // grab the shelter that we should be displaying
+  var shelter;
   for (var i = 0; i < shelters.length; i++) {
     if (shelters[i].id === id) {
       shelter = shelters[i];
@@ -77,13 +113,27 @@ function showShelter(id) {
     }
   }
 
+  // if we found a shelter display its map
   if (shelter) {
     var lat = shelter.latitude;
     var long = shelter.longitude;
 
-    var theMap = showMap('map', lat, long);
+    // only call showMap if we haven't done it once already
+    if (initMap) {
+      theMap = showMap('map', lat, long);
+      initMap = false;
+    }
+
+    // place a marker on the map for this shelter and add a pop up to it
     var marker = L.marker([lat, long]).addTo(theMap);
-    marker.bindPopup(shelter.name).openPopup();
+    theMap.setView([lat, long]);
+    theMap.setZoom(15);
+
+    marker.bindPopup(
+      '<h6>' + shelter.name + '<h6>' +
+      shelter.address.number + ' ' + shelter.address.street + '<br>' +
+      shelter.address.city + ', ' + shelter.address.state + ' ' + shelter.address.zip
+    ).openPopup();
   }
 }
 
@@ -161,8 +211,8 @@ function displaySuggestions() {
   }
 }
 
-function display (shelters) {
-  var theResults = document.getElementById('results');
+function display (where, shelters) {
+  var theResults = document.getElementById(where);
 
   clear(theResults);
 
@@ -189,7 +239,11 @@ function shouldDisplay(shelter, pet) {
   for (var i = 0; i < filters.length; i++) {
     switch (filters[i].type) {
       case 'breed':
-        should = (shelters[shelter].pets[pet].breed.toLowerCase() === filters[i].value.toLowerCase());
+        should = (should && (shelters[shelter].pets[pet].breed.toLowerCase() === filters[i].value.toLowerCase()));
+        break;
+      case 'shelter':
+        should = (should && (shelters[shelter].id === filters[i].value));
+        break;
     }
   }
 
@@ -250,4 +304,4 @@ function createPanel (shelter, pet) {
   return theRow;
 }
 
-display(shelters);
+display('results', shelters);
