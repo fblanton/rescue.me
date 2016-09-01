@@ -50,6 +50,7 @@ function handleClick (clicked) {
       showHero();
       break;
     case 'showShelter':
+      hideHero();
       showShelter(content);
       resultsView = 'shelter-results';
       display(resultsView, shelters);
