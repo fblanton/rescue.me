@@ -13,6 +13,8 @@ theSearch.setAttribute('data-action', 'showBreed');
 theQuery.addEventListener('input', displaySuggestions);
 
 document.getElementById('logo').setAttribute('data-action', 'showHero');
+document.getElementById('close').setAttribute('data-action', 'hideDetails');
+
 document.body.addEventListener('click', handleClick);
 
 function handleClick (clicked) {
@@ -20,12 +22,18 @@ function handleClick (clicked) {
   var content = '';
   var target = clicked.target;
 
-  if (target.hasAttribute('data-action')) {
-    action = target.getAttribute('data-action');
+  // Test if the target does not have an attribute named data-action, but does have a parent. If it does, run up the DOM tree to find a potential data-action.
+  while (!(target.hasAttribute('data-action')) && target.parentNode) {
+    target = target.parentNode;
+    if (typeof target.hasAttribute !== 'function') { break; } // Break out of loop if the target no longer has the hasAttribute function because we hit the DOM tree top.
   }
 
-  if (target.hasAttribute('data-content')) {
-    var content = target.getAttribute('data-content');
+  if (typeof target.hasAttribute === 'function') {
+    action = target.getAttribute('data-action');
+
+    if (target.hasAttribute('data-content')) {
+      var content = target.getAttribute('data-content');
+    }
   }
 
   switch (action) {
@@ -60,9 +68,17 @@ function handleClick (clicked) {
       resultsView = 'results';
       display(resultsView, shelters);
       break;
+    case 'showDetails':
+      showDetails(content);
+      document.getElementById('details').classList.remove('hidden');
+      break;
+    case 'hideDetails':
+      document.getElementById('details').classList.add('hidden');
+      break;
   }
 }
 
+// switch the primary view by
 function view(show) {
   var theViews = document.getElementById('views');
   var theOld = theViews.getElementsByClassName('active')[0];
@@ -252,24 +268,33 @@ function shouldDisplay(shelter, pet) {
   return should;
 }
 
+function showDetails(animal) {
+
+}
+
 function createPanel (shelter, pet) {
   var theRow = document.createElement('div');  // create a div for the resulting item
   theRow.classList.add('col-md-4', 'entry');
   var thePanel = document.createElement('div');
   thePanel.classList.add('panel','panel-default');
+  thePanel.setAttribute('data-action', 'showDetails');
+  thePanel.setAttribute('data-content',
+    JSON.stringify({shelter: shelter.id, pet: shelter.pets[pet].id})
+  );
+
 
   var thePanelBody = document.createElement('div');
   thePanelBody.classList.add('panel-body');
   thePanel.appendChild(thePanelBody);
 
   var theImageRow = document.createElement('div');
-  theImageRow.classList.add('row', 'center-contents');
+  theImageRow.classList.add('row', 'centered');
   theImageRow.innerHTML = imgHTML;
   thePanelBody.appendChild(theImageRow);
 
   var thePetName = document.createElement('h5');
   thePetName.textContent = shelter.pets[pet].name;
-  thePetName.classList.add('center-contents');
+  thePetName.classList.add('centered');
   thePanelBody.appendChild(thePetName);
 
   var theHR = document.createElement('hr');
