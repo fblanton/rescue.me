@@ -23,7 +23,7 @@ video {
 .voffset2 { margin-top: 2em; }
 .voffset3 { margin-top: 3em; }
 
-.center-contents {
+.centered {
   text-align: center;
 }
 
@@ -89,5 +89,13 @@ video {
 }
 
 #details {
+  position: fixed;
+  top: 10vh;
+  z-index: 1000;
+  left: 10vw;
+}
 
+#details .jumbotron {
+  height: 80vh;
+  width: 80vw;
 }
