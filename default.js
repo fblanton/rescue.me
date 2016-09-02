@@ -30,16 +30,7 @@ function handleClick(clicked) {
       complete('breed', content);
       break;
     case 'filter-breed':
-      for (i = 0; i < filters.length; i++) {
-        if (filters[i].type === 'breed') {
-          filters.splice(i, 1);
-        }
-      }
-      if (content === '') { content = theQuery.value };
-      if (content !== '') {
-        filters.push({type: 'breed', value: content});
-      }
-
+      add('breed', content, filters);
       set('hero', 'hidden', true);
       set('header', 'heroed', false);
       display(shelters);
@@ -66,6 +57,18 @@ function handleClick(clicked) {
     case 'hideDetails':
       set('modal', 'hidden', true);
       break;
+  }
+}
+
+function add(type, content, filters) {
+  for (i = 0; i < filters.length; i++) {
+    if (filters[i].type === 'breed') {
+      filters.splice(i, 1);
+    }
+  }
+  if (content === '') { content = document.getElementById('breed').value };
+  if (content !== '') {
+    filters.push({type: 'breed', value: content});
   }
 }
 
@@ -149,6 +152,7 @@ function createMap(id, lat, long) {
 
 function complete(destination, content) {
     document.getElementById(destination).value = content;
+    document.getElementById('filter-breed').setAttribute('data-content', content);
     clear(document.getElementById('breed-suggestions'));
 }
 
@@ -158,12 +162,14 @@ function clear(element) {
   }
 }
 
-function suggest(event) {
-  var typed = event.target.value.toLowerCase();
+function suggest(breeds) {
+  var typed = breeds.target.value.toLowerCase();
   var matches = [];
   var theSuggestions = document.getElementById('breed-suggestions');
 
   clear(theSuggestions);
+
+  document.getElementById('filter-breed').setAttribute('data-content', typed);
 
   if (typed !== '') {
     animals.forEach(function(animalType) {
@@ -181,8 +187,8 @@ function suggest(event) {
     return (a.toLowerCase().indexOf(typed) - b.toLowerCase().indexOf(typed));
   });
 
-
-  if (!((matches.length === 1) && (matches[0].toLowerCase() === value))) {
+  // list the suggested breeds if the one suggestion is different than what has been typed
+  if (!((matches.length === 1) && (matches[0].toLowerCase() === typed))) {
     for(var i = 0; i < matches.length && i < 10; i++) {
       theSuggestions.appendChild(
         element('li', {class: 'list-group-item', 'data-action': 'complete-breed', 'data-content': matches[i]}, matches[i])
