@@ -43,11 +43,13 @@ function handleClick(clicked) {
         filters.push({type: 'breed', value: content});
       }
 
-      hideHero();
+      set('hero', 'hidden', true);
+      set('header', 'heroed', false)
       display(shelters);
       break;
     case 'showHero':
-      showHero();
+      set('hero', 'hidden', false);
+      set('header', 'heroed', true)
       break;
     case 'showShelter':
       hideHero();
@@ -59,17 +61,23 @@ function handleClick(clicked) {
       display(shelters);
       break;
     case 'showDetails':
+      set('modal', 'hidden', false);
       var view = document.getElementById('details');
       update(JSON.parse(content), view);
-      view.classList.remove('hidden');
-      document.getElementById('modal-close').classList.remove('hidden');
-      // refactor above with visiblity('details', 'hidden', false)
       break;
     case 'hideDetails':
-      document.getElementById('details').classList.add('hidden');
-      document.getElementById('modal-close').classList.add('hidden');
-      // refactor above with visiblity('details', 'hidden', true)
+      set('modal', 'hidden', true);
       break;
+  }
+}
+
+function set(item, style, on) {
+  var theItem = document.getElementById(item);
+
+  if (on) {
+    theItem.classList.add(style);
+  } else {
+    theItem.classList.remove(style);
   }
 }
 
@@ -140,21 +148,6 @@ function createMap(id, lat, long) {
   }).addTo(theMap);
 
   return theMap;
-}
-
-// Need to be able to show and hide our hero elements on demand
-function hideHero() {
-  var theHero = document.getElementById('hero');
-  theHero.classList.add('hidden');
-  var theHeader = document.getElementById('header');
-  theHeader.classList.remove('heroed');
-}
-
-function showHero() {
-  theHero = document.getElementById('hero');
-  theHero.classList.remove('hidden');
-  var theHeader = document.getElementById('header');
-  theHeader.classList.add('heroed');
 }
 
 function setQuery(content) {

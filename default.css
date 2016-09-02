@@ -90,7 +90,7 @@ video {
 }
 
 #map {
-  height: 400px;
+  height: 250px;
 }
 
 #shelter-info {
@@ -103,13 +103,6 @@ video {
   top: 10vh;
   z-index: 2000;
   left: 10vw;
-  transition: all .3s;
-}
-
-#details.hidden {
-  display: unset !important;
-  pointer-events: none;
-  opacity: 0;
 }
 
 #details .jumbotron {
@@ -131,17 +124,4 @@ video {
   width: 100vw;
   z-index: 1500;
   background-color: rgba(25,25,25,.5);
-  transition: all .3s;
-}
-
-#modal-close.hidden {
-  display: unset !important;
-  pointer-events: none;
-  opacity: 0;
-}
-
-#close {
-  position: absolute;
-  top: 15px;
-  right: 30px;
 }
