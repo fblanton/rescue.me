@@ -1,7 +1,5 @@
 // temporary gray image as a placeholder until images are addded to the data
 var imagePlaceholder = 'data:image\/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9InllcyI\/PjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iMTQwIiBoZWlnaHQ9IjE0MCIgdmlld0JveD0iMCAwIDE0MCAxNDAiIHByZXNlcnZlQXNwZWN0UmF0aW89Im5vbmUiPjwhLS0KU291cmNlIFVSTDogaG9sZGVyLmpzLzE0MHgxNDAKQ3JlYXRlZCB3aXRoIEhvbGRlci5qcyAyLjYuMC4KTGVhcm4gbW9yZSBhdCBodHRwOi8vaG9sZGVyanMuY29tCihjKSAyMDEyLTIwMTUgSXZhbiBNYWxvcGluc2t5IC0gaHR0cDovL2ltc2t5LmNvCi0tPjxkZWZzPjxzdHlsZSB0eXBlPSJ0ZXh0L2NzcyI+PCFbQ0RBVEFbI2hvbGRlcl8xNTZkODRiYjUzMiB0ZXh0IHsgZmlsbDojQUFBQUFBO2ZvbnQtd2VpZ2h0OmJvbGQ7Zm9udC1mYW1pbHk6QXJpYWwsIEhlbHZldGljYSwgT3BlbiBTYW5zLCBzYW5zLXNlcmlmLCBtb25vc3BhY2U7Zm9udC1zaXplOjEwcHQgfSBdXT48L3N0eWxlPjwvZGVmcz48ZyBpZD0iaG9sZGVyXzE1NmQ4NGJiNTMyIj48cmVjdCB3aWR0aD0iMTQwIiBoZWlnaHQ9IjE0MCIgZmlsbD0iI0VFRUVFRSIvPjxnPjx0ZXh0IHg9IjQ0LjY4NzUiIHk9Ijc0LjM2NDA2MjUiPjE0MHgxNDA8L3RleHQ+PC9nPjwvZz48L3N2Zz4=';
-var thePlaceholder = element('img', null, ['placeholder']);
-thePlaceholder.src = imagePlaceholder;
 
 //begin gloabl variables
 var shelters = JSON.parse(data);
@@ -13,7 +11,6 @@ var initMap = true;
 var theMap = {};
 var resultsView = 'results';
 
-theSearch.setAttribute('data-action', 'showBreed');
 theQuery.addEventListener('input', displaySuggestions);
 
 document.getElementById('logo').setAttribute('data-action', 'showHero');
@@ -44,7 +41,7 @@ function handleClick(clicked) {
     case 'setQuery':
       setQuery(content);
       break;
-    case 'showBreed':
+    case 'filter-breed':
       for (i = 0; i < filters.length; i++) {
         if (filters[i].type === 'breed') {
           filters.splice(i, 1);
@@ -247,7 +244,7 @@ function display(where, shelters) {
   for (var i = 0; i < shelters.length; i++) {
     for (j = 0; j < shelters[i].pets.length; j++) {
       if (shouldDisplay(i, j)) {
-        var theRow = createCard(shelters[i], j);
+        var theRow = createCard(shelters[i], shelters[i].pets[j]);
         theResults.appendChild(theRow);
         count++;
       }
@@ -304,43 +301,47 @@ function update(animal, view) {
   // create elements for the left hand side of the modal dialog
   elements.push(
     theImage,
-    element('h3', pet.name, ['centered']),
-    element('p', pet.breed + ' | ' + pet.gender),
-    element('p', 'Adoption Fee: $' + pet.fee),
-    element('p', 'Availability: ' + pet.status)
+    element('h3', {class: 'centered'}, pet.name),
+    element('p', {}, pet.breed + ' | ' + pet.gender),
+    element('p', {}, 'Adoption Fee: $' + pet.fee),
+    element('p', {}, 'Availability: ' + pet.status)
   );
   append(theAnimal, elements);
 
   // create elements for the right hand side of the modal dialog
   elements = [];
   elements.push(
-    element('h3', 'Description'),
-    element('p', pet.description),
+    element('h3', {}, 'Description'),
+    element('p', {}, pet.description),
     element('hr'),
-    element('h3', shelter.name),
-    element('pre', shelter.address.number
+    element('h3', {}, shelter.name),
+    element('pre', {}, shelter.address.number
       + ' '  + shelter.address.street
       + '\n' + shelter.address.city
       + ', ' + shelter.address.state
       + ' '  + shelter.address.zip
       + '\n' + shelter.phone),
-    element('p', shelter.description)
+    element('p', {}, shelter.description)
   );
   append(theDescription, elements);
 }
 
-function element(tag, contents, classes, id) {
+function element(tag, attributes, contents) {
   var theElement = document.createElement(tag);
 
-  if (contents) { theElement.textContent = contents; }
-
-  if (classes) {
-    for (var i = 0; i< classes.length; i++) {
-      theElement.classList.add(classes[i]);
+  if (attributes) {
+    for (var attribute in attributes) {
+      theElement.setAttribute(attribute, attributes[attribute]);
     }
   }
 
-  if (id) { theElement.id = id }
+  if (Array.isArray(contents)) {
+    contents.forEach(function(item){
+      theElement.appendChild(item);
+    });
+  } else if (typeof contents !== 'undefined') {
+    theElement.textContent = contents;
+  }
 
   return theElement;
 }
@@ -361,31 +362,22 @@ function addTo(element, attributes) {
   return element;
 }
 
-function createCard(shelter, animalID) {
-  var elements = [];
-  var pet = shelter.pets[animalID];
-  var theImage = thePlaceholder.cloneNode();
-  var theCard = element('div', null, ['col-md-4']);
-  var theEntry = element('div', null, ['entry']);
-  var theRescueLink = element('a', shelter.name);
-
-  addTo(theEntry, [['data-action', 'showDetails'], ['data-content',
-    JSON.stringify({shelter: shelter.id, pet: pet.id})]]);
-  addTo(theRescueLink, [['data-action', 'showShelter'], ['data-content', shelter.id]]);
-
-  elements.push(
-    theImage,  // currently a global var
-    element('h5', pet.name, ['centered']),
-    element('hr'),
-    element('p', pet.breed),
-    element('p', parseInt(pet.age/12) + ' yrs ' + parseInt(pet.age%12) + ' mos | ' + pet.gender),
-    element('p').appendChild(theRescueLink),
-    element('p', shelter.address.city + ' ' + shelter.address.state)
-  );
-
-  theCard.appendChild(append(theEntry, elements));
-
-  return theCard;
+function createCard(shelter, pet) {
+  return element('div', {class: 'col-md-4'},
+  [ element('div',
+    { class: 'entry',
+    'data-action': 'showDetails',
+    'data-content': JSON.stringify({shelter: shelter.id, pet: pet.id}) },
+    [ element('img', {src: imagePlaceholder, class: 'placeholder'}),
+      element('h5', {class: 'centered'}, pet.name),
+      element('hr'),
+      element('p', {}, pet.breed),
+      element('p', {}, parseInt(pet.age/12) + ' yrs ' + parseInt(pet.age%12) + ' mos | ' + pet.gender),
+      element('p', {},
+        [ element('a', {'data-action': 'showShelter','data-content': shelter.id }, shelter.name) ]),
+      element('p', {}, shelter.address.city + ' ' + shelter.address.state)
+    ])
+  ]);
 }
 
 display('results', shelters);
