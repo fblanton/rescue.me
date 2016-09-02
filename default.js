@@ -7,14 +7,9 @@ var filters = [];
 var theQuery = document.getElementById('q-input');
 var theSuggestions = document.getElementById('q-suggestions');
 var theSearch = document.getElementById('search');
-var theMap = createMap('map', 0, 0);
-var resultsView = 'results';
+var theMap = createMap('map', 33.6496328, -117.74345);
 
 theQuery.addEventListener('input', displaySuggestions);
-
-document.getElementById('logo').setAttribute('data-action', 'showHero');
-document.getElementById('close').setAttribute('data-action', 'hideDetails');
-
 document.body.addEventListener('click', handleClick);
 
 function handleClick(clicked) {
@@ -52,7 +47,7 @@ function handleClick(clicked) {
       }
 
       hideHero();
-      display(resultsView, shelters);
+      display(shelters);
       break;
     case 'showHero':
       showHero();
@@ -60,13 +55,11 @@ function handleClick(clicked) {
     case 'showShelter':
       hideHero();
       showShelter(content);
-      resultsView = 'shelter-results';
-      display(resultsView, shelters);
+      display(shelters);
       break;
     case 'exitShelter':
       hideShelter();
-      resultsView = 'results';
-      display(resultsView, shelters);
+      display(shelters);
       break;
     case 'showDetails':
       var view = document.getElementById('details');
@@ -144,7 +137,6 @@ function showShelter(id) {
     theMap.remove();
     theMap = createMap('map', lat, long);
     var marker = L.marker([lat, long]).addTo(theMap);
-    console.log(theMap.tileLayer);
 
     marker.bindPopup(
       '<h6>' + shelter.name + '<h6>' +
@@ -228,8 +220,8 @@ function displaySuggestions() {
   }
 }
 
-function display(where, shelters) {
-  var theResults = document.getElementById(where);
+function display(shelters) {
+  var theResults = document.getElementById('results');
 
   clear(theResults);
 
@@ -366,4 +358,4 @@ function createCard(shelter, pet) {
   ]);
 }
 
-display('results', shelters);
+display(shelters);
