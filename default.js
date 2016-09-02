@@ -21,7 +21,7 @@ document.getElementById('close').setAttribute('data-action', 'hideDetails');
 
 document.body.addEventListener('click', handleClick);
 
-function handleClick (clicked) {
+function handleClick(clicked) {
   var action = '';
   var content = '';
   var target = clicked.target;
@@ -101,7 +101,7 @@ function view(show) {
   document.getElementById(show).classList.add('active');
 }
 
-function hideShelter () {
+function hideShelter() {
   filters = filters.filter(function (a) {
     return a.type !== 'shelter';
   })
@@ -237,7 +237,7 @@ function displaySuggestions() {
   }
 }
 
-function display (where, shelters) {
+function display(where, shelters) {
   var theResults = document.getElementById(where);
 
   clear(theResults);
