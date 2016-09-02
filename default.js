@@ -7,8 +7,7 @@ var filters = [];
 var theQuery = document.getElementById('q-input');
 var theSuggestions = document.getElementById('q-suggestions');
 var theSearch = document.getElementById('search');
-var initMap = true;
-var theMap = {};
+var theMap = createMap('map', 0, 0);
 var resultsView = 'results';
 
 theQuery.addEventListener('input', displaySuggestions);
@@ -141,16 +140,11 @@ function showShelter(id) {
     var lat = shelter.latitude;
     var long = shelter.longitude;
 
-    // only call showMap if we haven't done it once already
-    if (initMap) {
-      theMap = showMap('map', lat, long);
-      initMap = false;
-    }
-
     // place a marker on the map for this shelter and add a pop up to it
+    theMap.remove();
+    theMap = createMap('map', lat, long);
     var marker = L.marker([lat, long]).addTo(theMap);
-    theMap.setView([lat, long]);
-    theMap.setZoom(15);
+    console.log(theMap.tileLayer);
 
     marker.bindPopup(
       '<h6>' + shelter.name + '<h6>' +
@@ -161,7 +155,7 @@ function showShelter(id) {
 }
 
 // add a leafletjs map to a given element with id matching passed id
-function showMap(id, lat, long) {
+function createMap(id, lat, long) {
   var theMap = L.map(id).setView([lat, long], 15);
 
   L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
@@ -286,9 +280,9 @@ function getPet(shelter, id) {
   })
 }
 
-function update(animal, view) {
-  var shelter = getShelter(animal.shelter);
-  var pet = getPet(shelter, animal.pet);
+function update(content, view) {
+  var shelter = getShelter(content.shelterID);
+  var pet = getPet(shelter, content.petID);
 
   clear(view);
 
@@ -359,7 +353,7 @@ function createCard(shelter, pet) {
   [ element('div',
     { class: 'entry',
     'data-action': 'showDetails',
-    'data-content': JSON.stringify({shelter: shelter.id, pet: pet.id}) },
+    'data-content': JSON.stringify({shelterID: shelter.id, petID: pet.id}) },
     [ element('img', {src: imagePlaceholder, class: 'placeholder'}),
       element('h5', {class: 'centered'}, pet.name),
       element('hr'),
