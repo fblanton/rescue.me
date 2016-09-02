@@ -289,41 +289,33 @@ function getPet(shelter, id) {
 function update(animal, view) {
   var shelter = getShelter(animal.shelter);
   var pet = getPet(shelter, animal.pet);
-  var elements = [];
 
-  var theAnimal = document.getElementById('animal');
-  var theDescription = document.getElementById('description');
-  clear(theAnimal);
-  clear(theDescription);
+  clear(view);
 
-  var theImage = thePlaceholder.cloneNode();
-
-  // create elements for the left hand side of the modal dialog
-  elements.push(
-    theImage,
-    element('h3', {class: 'centered'}, pet.name),
-    element('p', {}, pet.breed + ' | ' + pet.gender),
-    element('p', {}, 'Adoption Fee: $' + pet.fee),
-    element('p', {}, 'Availability: ' + pet.status)
+  view.appendChild(
+    element('div', {class: 'jumbotron'}, [
+      element('div', {class: 'col-xs-4'}, [
+        element('img', {src: imagePlaceholder, class: 'placeholder'}),
+        element('h3', {class: 'centered'}, pet.name),
+        element('p', {}, pet.breed + ' | ' + pet.gender),
+        element('p', {}, 'Adoption Fee: $' + pet.fee),
+        element('p', {}, 'Availability: ' + pet.status)
+      ]),
+      element('div', {class: 'col-xs-8'}, [
+        element('h3', {}, 'Description'),
+        element('p', {}, pet.description),
+        element('hr'),
+        element('h3', {}, shelter.name),
+        element('pre', {}, shelter.address.number
+          + ' '  + shelter.address.street
+          + '\n' + shelter.address.city
+          + ', ' + shelter.address.state
+          + ' '  + shelter.address.zip
+          + '\n' + shelter.phone),
+        element('p', {}, shelter.description)
+      ])
+    ])
   );
-  append(theAnimal, elements);
-
-  // create elements for the right hand side of the modal dialog
-  elements = [];
-  elements.push(
-    element('h3', {}, 'Description'),
-    element('p', {}, pet.description),
-    element('hr'),
-    element('h3', {}, shelter.name),
-    element('pre', {}, shelter.address.number
-      + ' '  + shelter.address.street
-      + '\n' + shelter.address.city
-      + ', ' + shelter.address.state
-      + ' '  + shelter.address.zip
-      + '\n' + shelter.phone),
-    element('p', {}, shelter.description)
-  );
-  append(theDescription, elements);
 }
 
 function element(tag, attributes, contents) {
