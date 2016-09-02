@@ -362,12 +362,11 @@ function addTo(element, attributes) {
 }
 
 function createCard(shelter, animalID) {
-  var empty = null;
   var elements = [];
   var pet = shelter.pets[animalID];
   var theImage = thePlaceholder.cloneNode();
-  var theCard = element('div', empty, ['col-md-4']);
-  var theEntry = element('div', empty, ['entry']);
+  var theCard = element('div', null, ['col-md-4']);
+  var theEntry = element('div', null, ['entry']);
   var theRescueLink = element('a', shelter.name);
 
   addTo(theEntry, [['data-action', 'showDetails'], ['data-content',
