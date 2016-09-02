@@ -1,4 +1,4 @@
-var imgHTML = '<img alt=\"140x140\" class=\"img-circle\" src=\"data:image\/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9InllcyI\/PjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iMTQwIiBoZWlnaHQ9IjE0MCIgdmlld0JveD0iMCAwIDE0MCAxNDAiIHByZXNlcnZlQXNwZWN0UmF0aW89Im5vbmUiPjwhLS0KU291cmNlIFVSTDogaG9sZGVyLmpzLzE0MHgxNDAKQ3JlYXRlZCB3aXRoIEhvbGRlci5qcyAyLjYuMC4KTGVhcm4gbW9yZSBhdCBodHRwOi8vaG9sZGVyanMuY29tCihjKSAyMDEyLTIwMTUgSXZhbiBNYWxvcGluc2t5IC0gaHR0cDovL2ltc2t5LmNvCi0tPjxkZWZzPjxzdHlsZSB0eXBlPSJ0ZXh0L2NzcyI+PCFbQ0RBVEFbI2hvbGRlcl8xNTZkODRiYjUzMiB0ZXh0IHsgZmlsbDojQUFBQUFBO2ZvbnQtd2VpZ2h0OmJvbGQ7Zm9udC1mYW1pbHk6QXJpYWwsIEhlbHZldGljYSwgT3BlbiBTYW5zLCBzYW5zLXNlcmlmLCBtb25vc3BhY2U7Zm9udC1zaXplOjEwcHQgfSBdXT48L3N0eWxlPjwvZGVmcz48ZyBpZD0iaG9sZGVyXzE1NmQ4NGJiNTMyIj48cmVjdCB3aWR0aD0iMTQwIiBoZWlnaHQ9IjE0MCIgZmlsbD0iI0VFRUVFRSIvPjxnPjx0ZXh0IHg9IjQ0LjY4NzUiIHk9Ijc0LjM2NDA2MjUiPjE0MHgxNDA8L3RleHQ+PC9nPjwvZz48L3N2Zz4=\" data-holder-rendered=\"true\" style=\"width: 140px; height: 140px;\">'; // temporary gray image as a placeholder until images are addded to the data
+var imgHTML = '<img alt=\"140x140\" class=\"img-circle\" src=\"data:image\/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9InllcyI\/PjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iMTQwIiBoZWlnaHQ9IjE0MCIgdmlld0JveD0iMCAwIDE0MCAxNDAiIHByZXNlcnZlQXNwZWN0UmF0aW89Im5vbmUiPjwhLS0KU291cmNlIFVSTDogaG9sZGVyLmpzLzE0MHgxNDAKQ3JlYXRlZCB3aXRoIEhvbGRlci5qcyAyLjYuMC4KTGVhcm4gbW9yZSBhdCBodHRwOi8vaG9sZGVyanMuY29tCihjKSAyMDEyLTIwMTUgSXZhbiBNYWxvcGluc2t5IC0gaHR0cDovL2ltc2t5LmNvCi0tPjxkZWZzPjxzdHlsZSB0eXBlPSJ0ZXh0L2NzcyI+PCFbQ0RBVEFbI2hvbGRlcl8xNTZkODRiYjUzMiB0ZXh0IHsgZmlsbDojQUFBQUFBO2ZvbnQtd2VpZ2h0OmJvbGQ7Zm9udC1mYW1pbHk6QXJpYWwsIEhlbHZldGljYSwgT3BlbiBTYW5zLCBzYW5zLXNlcmlmLCBtb25vc3BhY2U7Zm9udC1zaXplOjEwcHQgfSBdXT48L3N0eWxlPjwvZGVmcz48ZyBpZD0iaG9sZGVyXzE1NmQ4NGJiNTMyIj48cmVjdCB3aWR0aD0iMTQwIiBoZWlnaHQ9IjE0MCIgZmlsbD0iI0VFRUVFRSIvPjxnPjx0ZXh0IHg9IjQ0LjY4NzUiIHk9Ijc0LjM2NDA2MjUiPjE0MHgxNDA8L3RleHQ+PC9nPjwvZz48L3N2Zz4=\" data-holder-rendered=\"true\" style=\"width: 100%; max-height: 140px;\">'; // temporary gray image as a placeholder until images are addded to the data
 
 var shelters = JSON.parse(data);
 var filters = []; // a variable that will hold the current search query
@@ -13,6 +13,8 @@ theSearch.setAttribute('data-action', 'showBreed');
 theQuery.addEventListener('input', displaySuggestions);
 
 document.getElementById('logo').setAttribute('data-action', 'showHero');
+document.getElementById('close').setAttribute('data-action', 'hideDetails');
+
 document.body.addEventListener('click', handleClick);
 
 function handleClick (clicked) {
@@ -20,12 +22,18 @@ function handleClick (clicked) {
   var content = '';
   var target = clicked.target;
 
-  if (target.hasAttribute('data-action')) {
-    action = target.getAttribute('data-action');
+  // Test if the target does not have an attribute named data-action, but does have a parent. If it does, run up the DOM tree to find a potential data-action.
+  while (!(target.hasAttribute('data-action')) && target.parentNode) {
+    target = target.parentNode;
+    if (typeof target.hasAttribute !== 'function') { break; } // Break out of loop if the target no longer has the hasAttribute function because we hit the DOM tree top.
   }
 
-  if (target.hasAttribute('data-content')) {
-    var content = target.getAttribute('data-content');
+  if (typeof target.hasAttribute === 'function') {
+    action = target.getAttribute('data-action');
+
+    if (target.hasAttribute('data-content')) {
+      var content = target.getAttribute('data-content');
+    }
   }
 
   switch (action) {
@@ -60,9 +68,22 @@ function handleClick (clicked) {
       resultsView = 'results';
       display(resultsView, shelters);
       break;
+    case 'showDetails':
+      var view = document.getElementById('details');
+      update(JSON.parse(content), view);
+      view.classList.remove('hidden');
+      document.getElementById('modal-close').classList.remove('hidden');
+      // refactor above with visiblity('details', 'hidden', false)
+      break;
+    case 'hideDetails':
+      document.getElementById('details').classList.add('hidden');
+      document.getElementById('modal-close').classList.add('hidden');
+      // refactor above with visiblity('details', 'hidden', true)
+      break;
   }
 }
 
+// switch the primary view by
 function view(show) {
   var theViews = document.getElementById('views');
   var theOld = theViews.getElementsByClassName('active')[0];
@@ -252,24 +273,105 @@ function shouldDisplay(shelter, pet) {
   return should;
 }
 
+function getShelter(id) {
+  return shelters.find(function(shelter) {
+    return shelter.id === id;
+  });
+}
+
+function getPet(shelter, id) {
+  return shelter.pets.find(function(pet) {
+    return pet.id === id;
+  })
+}
+
+function update(animal, view) {
+  var shelter = getShelter(animal.shelter);
+  var pet = getPet(shelter, animal.pet);
+  var elements = [];
+
+  var theAnimal = document.getElementById('animal');
+  var theDescription = document.getElementById('description');
+  clear(theAnimal);
+  clear(theDescription);
+
+  var theImage = document.createElement('div');
+  theImage.innerHTML = imgHTML;
+  theImage.classList.add('centered');
+  theAnimal.appendChild(theImage);
+
+  // create elements for the left hand side of the modal dialog
+  elements.push(
+    element('h3', pet.name, ['centered']),
+    element('p', pet.breed + ' | ' + pet.gender),
+    element('p', 'Adoption Fee: $' + pet.fee),
+    element('p', 'Availability: ' + pet.status)
+  );
+  append(theAnimal, elements);
+
+  // create elements for the right hand side of the modal dialog
+  elements = [];
+  elements.push(
+    element('h3', 'Description'),
+    element('p', pet.description),
+    element('hr'),
+    element('h3', shelter.name),
+    element('pre', shelter.address.number
+      + ' '  + shelter.address.street
+      + '\n' + shelter.address.city
+      + ', ' + shelter.address.state
+      + ' '  + shelter.address.zip
+      + '\n' + shelter.phone),
+    element('p', shelter.description)
+  );
+  append(theDescription, elements);
+}
+
+function element(tag, contents, styles, id) {
+  var theElement = document.createElement(tag);
+
+  if (contents) { theElement.textContent = contents; }
+
+  if (styles) {
+    for (var i = 0; i< styles.length; i++) {
+      theElement.classList.add(styles[i]);
+    }
+  }
+
+  if (id) { theElement.id = id }
+
+  return theElement;
+}
+
+function append(element, children) {
+  children.forEach(function(child) {
+    element.appendChild(child);
+  });
+}
+
 function createPanel (shelter, pet) {
   var theRow = document.createElement('div');  // create a div for the resulting item
   theRow.classList.add('col-md-4', 'entry');
   var thePanel = document.createElement('div');
   thePanel.classList.add('panel','panel-default');
+  thePanel.setAttribute('data-action', 'showDetails');
+  thePanel.setAttribute('data-content',
+    JSON.stringify({shelter: shelter.id, pet: shelter.pets[pet].id})
+  );
+
 
   var thePanelBody = document.createElement('div');
   thePanelBody.classList.add('panel-body');
   thePanel.appendChild(thePanelBody);
 
   var theImageRow = document.createElement('div');
-  theImageRow.classList.add('row', 'center-contents');
+  theImageRow.classList.add('row', 'centered');
   theImageRow.innerHTML = imgHTML;
   thePanelBody.appendChild(theImageRow);
 
   var thePetName = document.createElement('h5');
   thePetName.textContent = shelter.pets[pet].name;
-  thePetName.classList.add('center-contents');
+  thePetName.classList.add('centered');
   thePanelBody.appendChild(thePetName);
 
   var theHR = document.createElement('hr');
