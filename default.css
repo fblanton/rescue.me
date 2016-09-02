@@ -19,11 +19,21 @@ video {
   margin-bottom: 5px;
 }
 
+.entry {
+  background-color: rgba(200, 200, 200, .1);
+  border-radius: 4px;
+  padding: 1em;
+  margin-bottom: 1em;
+}
+
 .voffset { margin-top: 1em; }
 .voffset2 { margin-top: 2em; }
 .voffset3 { margin-top: 3em; }
 
-.centered {
+.centered,
+.placeholder {
+  display: block;
+  margin: 0 auto 15px;
   text-align: center;
 }
 
