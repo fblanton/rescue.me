@@ -17,18 +17,15 @@ function handleClick(clicked) {
   var content = '';
   var target = clicked.target;
 
-  // Test if the target does not have an attribute named data-action, but does have a parent. If it does, run up the DOM tree to find a potential data-action.
   while (!(target.hasAttribute('data-action')) && target.parentNode) {
     target = target.parentNode;
-    if (typeof target.hasAttribute !== 'function') { break; } // Break out of loop if the target no longer has the hasAttribute function because we hit the DOM tree top.
+    if (typeof target.hasAttribute !== 'function') { return; }
   }
 
-  if (typeof target.hasAttribute === 'function') {
-    action = target.getAttribute('data-action');
+  action = target.getAttribute('data-action');
 
-    if (target.hasAttribute('data-content')) {
-      var content = target.getAttribute('data-content');
-    }
+  if (target.hasAttribute('data-content')) {
+    var content = target.getAttribute('data-content');
   }
 
   switch (action) {
@@ -76,20 +73,6 @@ function handleClick(clicked) {
   }
 }
 
-// switch the primary view by
-function view(show) {
-  var theViews = document.getElementById('views');
-  var theOld = theViews.getElementsByClassName('active')[0];
-
-  if (theOld.id !== show) {
-    theOld.classList.remove('active');
-    theOld.classList.add('hidden');
-  }
-
-  document.getElementById(show).classList.remove('hidden');
-  document.getElementById(show).classList.add('active');
-}
-
 function hideShelter() {
   filters = filters.filter(function (a) {
     return a.type !== 'shelter';
@@ -104,7 +87,6 @@ function showShelter(id) {
   filters.push({type: 'shelter', value: id});
 
   // show the shelter div on the page and display the shelter-info header
-  view('shelter');
   document.getElementById('shelter-info').classList.remove('hidden');
 
   // check to see if a back element exists and creat it if it does not
