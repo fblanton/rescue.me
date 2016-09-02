@@ -4,12 +4,9 @@ var imagePlaceholder = 'data:image\/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlb
 //begin gloabl variables
 var shelters = JSON.parse(data);
 var filters = [];
-var theQuery = document.getElementById('q-input');
-var theSuggestions = document.getElementById('q-suggestions');
-var theSearch = document.getElementById('search');
 var theMap = createMap('map', 33.6496328, -117.74345);
 
-theQuery.addEventListener('input', displaySuggestions);
+document.getElementById('breed').addEventListener('input', suggest);
 document.body.addEventListener('click', handleClick);
 
 function handleClick(clicked) {
@@ -29,8 +26,8 @@ function handleClick(clicked) {
   }
 
   switch (action) {
-    case 'setQuery':
-      setQuery(content);
+    case 'complete-breed':
+      complete('breed', content);
       break;
     case 'filter-breed':
       for (i = 0; i < filters.length; i++) {
@@ -44,15 +41,16 @@ function handleClick(clicked) {
       }
 
       set('hero', 'hidden', true);
-      set('header', 'heroed', false)
+      set('header', 'heroed', false);
       display(shelters);
       break;
     case 'showHero':
       set('hero', 'hidden', false);
-      set('header', 'heroed', true)
+      set('header', 'heroed', true);
       break;
     case 'showShelter':
-      hideHero();
+      set('hero', 'hidden', true);
+      set('header', 'heroed', false);
       showShelter(content);
       display(shelters);
       break;
@@ -86,7 +84,6 @@ function hideShelter() {
     return a.type !== 'shelter';
   })
   document.getElementById('back').remove();
-  view('search-breed');
   document.getElementById('shelter-info').classList.add('hidden');
 }
 
@@ -150,10 +147,9 @@ function createMap(id, lat, long) {
   return theMap;
 }
 
-function setQuery(content) {
-    theQuery.value = content;
-    query = content;
-    clear(theSuggestions);
+function complete(destination, content) {
+    document.getElementById(destination).value = content;
+    clear(document.getElementById('breed-suggestions'));
 }
 
 function clear(element) {
@@ -162,35 +158,35 @@ function clear(element) {
   }
 }
 
-function displaySuggestions() {
-  var value = theQuery.value.toLowerCase();
-  matches = [];
-
-  if (value !== '') {
-    for (var item in animals) {
-      for (var i = 0; i < animals[item].breeds.length; i++) {
-        if (animals[item].breeds[i].toLowerCase().indexOf(value) !== -1) {
-          matches.push(animals[item].breeds[i]);
-        }
-      }
-    }
-  }
+function suggest(event) {
+  var typed = event.target.value.toLowerCase();
+  var matches = [];
+  var theSuggestions = document.getElementById('breed-suggestions');
 
   clear(theSuggestions);
 
-  matches.sort(); // sort alphabtically
-  matches.sort(function(a,b) { // and then by how soon our query appears
-    return (a.toLowerCase().indexOf(value) - b.toLowerCase().indexOf(value));
+  if (typed !== '') {
+    animals.forEach(function(animalType) {
+      animalType.breeds.forEach(function(breed) {
+        if (breed.toLowerCase().indexOf(typed) !== -1) {
+          matches.push(breed);
+        }
+      })
+    });
+  }
+
+  // sort the found matches alphabetically and then how soon our
+  matches.sort();
+  matches.sort(function(a,b) {
+    return (a.toLowerCase().indexOf(typed) - b.toLowerCase().indexOf(typed));
   });
 
-  for (var j = 0; j < matches.length && j < 10; j++) {
-    if (!((matches.length === 1) && (matches[0].toLowerCase() === value))) {
-      var theSuggestion = document.createElement('li');
-      theSuggestion.classList.add('list-group-item');
-      theSuggestion.setAttribute('data-action', 'setQuery');
-      theSuggestion.setAttribute('data-content', matches[j]);
-      theSuggestion.textContent = matches[j];
-      theSuggestions.appendChild(theSuggestion);
+
+  if (!((matches.length === 1) && (matches[0].toLowerCase() === value))) {
+    for(var i = 0; i < matches.length && i < 10; i++) {
+      theSuggestions.appendChild(
+        element('li', {class: 'list-group-item', 'data-action': 'complete-breed', 'data-content': matches[i]}, matches[i])
+      );
     }
   }
 }
