@@ -249,10 +249,10 @@ function getShelter(id) {
   });
 }
 
-function getPet(shelter, id) {
+function getPet(id, shelter) {
   return shelter.pets.find(function(pet) {
     return pet.id === id;
-  })
+  });
 }
 
 function modal(data, type) {
@@ -262,7 +262,7 @@ function modal(data, type) {
   if (type === 'animal') {
     var dataObject = JSON.parse(data);
     var shelter = getShelter(dataObject.shelterID);
-    var pet = getPet(shelter, dataObject.petID);
+    var pet = getPet(dataObject.petID, shelter);
 
     theContent.appendChild(
       element('div', {class: 'jumbotron'}, [
