@@ -232,10 +232,12 @@ function shouldDisplay(shelter, pet) {
   for (var i = 0; (i < filters.length) && should; i++) {
     switch (filters[i].type) {
       case 'breed':
-        should = (should && (shelters[shelter].pets[pet].breed.toLowerCase() === filters[i].value.toLowerCase()));
+        should = shelters[shelter].pets[pet].breed.toLowerCase() === filters[i].value.toLowerCase();
+        if(should!) { return false; }
         break;
       case 'shelter':
-        should = (should && (shelters[shelter].id === filters[i].value));
+        should = shelters[shelter].id === filters[i].value;
+        if(should!) { return false; }
         break;
     }
   }
