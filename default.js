@@ -39,7 +39,7 @@ function handleClick(clicked) {
       set('hero', 'hidden', false);
       set('header', 'heroed', true);
       break;
-    case 'showShelter':
+    case 'show-shelter':
       set('hero', 'hidden', true);
       set('header', 'heroed', false);
       showShelter(content);
@@ -49,12 +49,10 @@ function handleClick(clicked) {
       hideShelter();
       display(shelters);
       break;
-    case 'showDetails':
-      set('modal', 'hidden', false);
-      var view = document.getElementById('details');
-      update(JSON.parse(content), view);
+    case 'show-animal':
+      modal(content, 'animal');
       break;
-    case 'hideDetails':
+    case 'hide-modal':
       set('modal', 'hidden', true);
       break;
   }
@@ -257,36 +255,42 @@ function getPet(shelter, id) {
   })
 }
 
-function update(content, view) {
-  var shelter = getShelter(content.shelterID);
-  var pet = getPet(shelter, content.petID);
+function modal(data, type) {
+  var theContent = document.getElementById('modal-content');
+  clear(theContent);
 
-  clear(view);
+  if (type === 'animal') {
+    var dataObject = JSON.parse(data);
+    var shelter = getShelter(dataObject.shelterID);
+    var pet = getPet(shelter, dataObject.petID);
 
-  view.appendChild(
-    element('div', {class: 'jumbotron'}, [
-      element('div', {class: 'col-xs-4'}, [
-        element('img', {src: imagePlaceholder, class: 'placeholder'}),
-        element('h3', {class: 'centered'}, pet.name),
-        element('p', {}, pet.breed + ' | ' + pet.gender),
-        element('p', {}, 'Adoption Fee: $' + pet.fee),
-        element('p', {}, 'Availability: ' + pet.status)
-      ]),
-      element('div', {class: 'col-xs-8'}, [
-        element('h3', {}, 'Description'),
-        element('p', {}, pet.description),
-        element('hr'),
-        element('h3', {}, shelter.name),
-        element('pre', {}, shelter.address.number
-          + ' '  + shelter.address.street
-          + '\n' + shelter.address.city
-          + ', ' + shelter.address.state
-          + ' '  + shelter.address.zip
-          + '\n' + shelter.phone),
-        element('p', {}, shelter.description)
+    theContent.appendChild(
+      element('div', {class: 'jumbotron'}, [
+        element('div', {class: 'col-xs-4'}, [
+          element('img', {src: imagePlaceholder, class: 'placeholder'}),
+          element('h3', {class: 'centered'}, pet.name),
+          element('p', {}, pet.breed + ' | ' + pet.gender),
+          element('p', {}, 'Adoption Fee: $' + pet.fee),
+          element('p', {}, 'Availability: ' + pet.status)
+        ]),
+        element('div', {class: 'col-xs-8'}, [
+          element('h3', {}, 'Description'),
+          element('p', {}, pet.description),
+          element('hr'),
+          element('h3', {}, shelter.name),
+          element('pre', {}, shelter.address.number
+            + ' '  + shelter.address.street
+            + '\n' + shelter.address.city
+            + ', ' + shelter.address.state
+            + ' '  + shelter.address.zip
+            + '\n' + shelter.phone),
+          element('p', {}, shelter.description)
+        ])
       ])
-    ])
-  );
+    );
+  }
+
+  set('modal', 'hidden', false);
 }
 
 function element(tag, attributes, contents) {
@@ -329,7 +333,7 @@ function createCard(shelter, pet) {
   return element('div', {class: 'col-md-4'},
   [ element('div',
     { class: 'entry',
-    'data-action': 'showDetails',
+    'data-action': 'show-animal',
     'data-content': JSON.stringify({shelterID: shelter.id, petID: pet.id}) },
     [ element('img', {src: imagePlaceholder, class: 'placeholder'}),
       element('h5', {class: 'centered'}, pet.name),
@@ -337,7 +341,7 @@ function createCard(shelter, pet) {
       element('p', {}, pet.breed),
       element('p', {}, parseInt(pet.age/12) + ' yrs ' + parseInt(pet.age%12) + ' mos | ' + pet.gender),
       element('p', {},
-        [ element('a', {'data-action': 'showShelter','data-content': shelter.id }, shelter.name) ]),
+        [ element('a', {'data-action': 'show-shelter','data-content': shelter.id }, shelter.name) ]),
       element('p', {}, shelter.address.city + ' ' + shelter.address.state)
     ])
   ]);
