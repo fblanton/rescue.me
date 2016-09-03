@@ -162,39 +162,46 @@ function clear(element) {
   }
 }
 
-function suggest(breeds) {
-  var typed = breeds.target.value.toLowerCase();
-  var matches = [];
-  var theSuggestions = document.getElementById('breed-suggestions');
+animals.returnBreeds = function(term) {
+  var matched = []
 
-  clear(theSuggestions);
-
-  document.getElementById('filter-breed').setAttribute('data-content', typed);
-
-  if (typed !== '') {
-    animals.forEach(function(animalType) {
-      animalType.breeds.forEach(function(breed) {
-        if (breed.toLowerCase().indexOf(typed) !== -1) {
-          matches.push(breed);
-        }
-      })
-    });
-  }
-
-  // sort the found matches alphabetically and then how soon our
-  matches.sort();
-  matches.sort(function(a,b) {
-    return (a.toLowerCase().indexOf(typed) - b.toLowerCase().indexOf(typed));
+  this.forEach(function(animalType) {
+    animalType.breeds.forEach(function(breed) {
+      if (breed.toLowerCase().indexOf(term) !== -1) {
+        matched.push(breed);
+      }
+    })
   });
 
-  // list the suggested breeds if the one suggestion is different than what has been typed
-  if (!((matches.length === 1) && (matches[0].toLowerCase() === typed))) {
-    for(var i = 0; i < matches.length && i < 10; i++) {
+  return matched;
+}
+
+function suggest(breeds) {
+  var term = breeds.target.value.toLowerCase();
+  var matched = [];
+  var theSuggestions = document.getElementById('breed-suggestions');
+  clear(theSuggestions);
+
+  if (term !== '') {
+    matched = animals.returnBreeds(term);
+  }
+
+  // sort the matched breeds alphabetically and then by how soon the term appears
+  matched.sort();
+  matched.sort(function(a,b) {
+    return (a.toLowerCase().indexOf(term) - b.toLowerCase().indexOf(term));
+  });
+
+  // add the matched breeds to theSuggestions DOM element
+  if (!((matched.length === 1) && (matched[0].toLowerCase() === term))) {
+    for(var i = 0; i < matched.length && i < 10; i++) {
       theSuggestions.appendChild(
-        element('li', {class: 'list-group-item', 'data-action': 'complete-breed', 'data-content': matches[i]}, matches[i])
+        element('li', {class: 'list-group-item', 'data-action': 'complete-breed', 'data-content': matched[i]}, matched[i])
       );
     }
   }
+
+  document.getElementById('filter-breed').setAttribute('data-content', term);
 }
 
 function display(shelters) {
@@ -207,8 +214,8 @@ function display(shelters) {
   for (var i = 0; i < shelters.length; i++) {
     for (j = 0; j < shelters[i].pets.length; j++) {
       if (shouldDisplay(i, j)) {
-        var theRow = createCard(shelters[i], shelters[i].pets[j]);
-        theResults.appendChild(theRow);
+        var theCard = createCard(shelters[i], shelters[i].pets[j]);
+        theResults.appendChild(theCard);
         count++;
       }
     }
@@ -222,7 +229,6 @@ function display(shelters) {
 function shouldDisplay(shelter, pet) {
   var should = true;
 
-  // Iterate through the filters array, perform an && operation on the current value of the should variable along with a comparison operation to see if the current pet should be displayed. If any case fails the item should not be display and should becomes false. At that point we can exit the loop.
   for (var i = 0; (i < filters.length) && should; i++) {
     switch (filters[i].type) {
       case 'breed':
