@@ -53,7 +53,7 @@ function handleClick(clicked) {
       modal(content, 'animal');
       break;
     case 'hide-modal':
-      set('modal', 'hidden', true);
+      set('modal-close', 'hidden', true);
       break;
   }
 }
@@ -290,7 +290,7 @@ function modal(data, type) {
     );
   }
 
-  set('modal', 'hidden', false);
+  set('modal-close', 'hidden', false);
 }
 
 function element(tag, attributes, contents) {
