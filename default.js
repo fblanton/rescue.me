@@ -229,7 +229,7 @@ function display(shelters) {
 function shouldDisplay(shelter, pet) {
   var should = true;
 
-  for (var i = 0; (i < filters.length) && should; i++) {
+  for (var i = 0; (i < filters.length); i++) {
     switch (filters[i].type) {
       case 'breed':
         should = shelters[shelter].pets[pet].breed.toLowerCase() === filters[i].value.toLowerCase();
