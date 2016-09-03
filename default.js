@@ -233,11 +233,11 @@ function shouldDisplay(shelter, pet) {
     switch (filters[i].type) {
       case 'breed':
         should = shelters[shelter].pets[pet].breed.toLowerCase() === filters[i].value.toLowerCase();
-        if(should!) { return false; }
+        if(!should) { return false; }
         break;
       case 'shelter':
         should = shelters[shelter].id === filters[i].value;
-        if(should!) { return false; }
+        if(!should) { return false; }
         break;
     }
   }
