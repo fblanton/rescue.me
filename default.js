@@ -31,14 +31,14 @@ function handleClick(clicked) {
       complete('breed', content);
       break;
     case 'filter-breed':
+      swap('headers', 'primary');
+      swap('views', 'results');
       add('breed', content, filters);
-      set('hero', 'hidden', true);
-      set('header', 'heroed', false);
       display(shelters);
       break;
-    case 'showHero':
-      set('hero', 'hidden', false);
-      set('header', 'heroed', true);
+    case 'show-hero':
+      swap('headers', 'hero');
+      swap('views', 'home');
       break;
     case 'show-shelter':
       set('hero', 'hidden', true);
@@ -57,6 +57,17 @@ function handleClick(clicked) {
       set('modal-close', 'hidden', true);
       break;
   }
+}
+
+function swap(area, view) {
+  var theArea = document.getElementById(area);
+  var theActive = theArea.getElementsByClassName('active')[0];
+  var theView = document.getElementById(view);
+
+  theActive.classList.remove('active');
+  theActive.classList.add('hidden');
+  theView.classList.remove('hidden');
+  theView.classList.add('active');
 }
 
 function add(type, content, filters) {
