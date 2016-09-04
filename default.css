@@ -65,20 +65,21 @@ video {
 #hero.active + #header + #breed-filter {
   position: absolute;
   top: 75vh;
-  left: 5vw;
-  width: 75vw;
+  left: 10vw;
+  width: 70vw;
   transform: translateY(-50%);
 }
 
 #hero.active + #header + #breed-filter h1 {
+  color: white;
+}
 
-#breed-suggesti  color: white;
-  border-radius: 4px;}
-ons {
+#breed-suggestions {
   position: absolute;
   right: 0;
   border-width: 1px;
   z-index: 100;
+  border-radius: 4px;
 }
 
 #breed-suggestions > li.list-group-item {
