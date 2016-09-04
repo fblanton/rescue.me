@@ -8,6 +8,7 @@ var theMap = createMap('map', 33.6496328, -117.74345);
 
 document.getElementById('breed').addEventListener('input', suggest);
 document.body.addEventListener('click', handleClick);
+//theMap.on('locationfound', function(e) { alert(e.latlng); });
 
 function handleClick(clicked) {
   var action = '';
@@ -348,3 +349,4 @@ function createCard(shelter, pet) {
 }
 
 display(shelters);
+theMap.locate();
