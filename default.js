@@ -152,21 +152,16 @@ function suggest(breeds) {
 
 function display(shelters, where) {
   if (!where) { where = 'results'; }
+
   var theResults = document.getElementById(where);
-  var pets = [];
+  var pets = filter(shelters);
   var count = 0;
 
   clear(theResults);
-  pets = filter(shelters);
-
-  for (var i = 0; i < pets.length; i++) {
-    var shelter = getShelter({petID: pets[i].id});
-    theResults.appendChild(createCard(shelter, pets[i]));
-  }
-
-  theEntry = document.createElement('div');
-  theEntry.textContent = count;
-  theResults.appendChild(theEntry);
+  theResults.appendChild(element('div', {id: 'number-displayed'}, _.size(pets)));
+  append(theResults, _.map(pets, function(pet) {
+    return (createCard(getShelter({petID: pet.id}), pet));
+  }));
 }
 
 function filter(array) {
