@@ -1,167 +1,83 @@
-var imgHTML = '<img alt=\"140x140\" class=\"img-circle\" src=\"data:image\/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9InllcyI\/PjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iMTQwIiBoZWlnaHQ9IjE0MCIgdmlld0JveD0iMCAwIDE0MCAxNDAiIHByZXNlcnZlQXNwZWN0UmF0aW89Im5vbmUiPjwhLS0KU291cmNlIFVSTDogaG9sZGVyLmpzLzE0MHgxNDAKQ3JlYXRlZCB3aXRoIEhvbGRlci5qcyAyLjYuMC4KTGVhcm4gbW9yZSBhdCBodHRwOi8vaG9sZGVyanMuY29tCihjKSAyMDEyLTIwMTUgSXZhbiBNYWxvcGluc2t5IC0gaHR0cDovL2ltc2t5LmNvCi0tPjxkZWZzPjxzdHlsZSB0eXBlPSJ0ZXh0L2NzcyI+PCFbQ0RBVEFbI2hvbGRlcl8xNTZkODRiYjUzMiB0ZXh0IHsgZmlsbDojQUFBQUFBO2ZvbnQtd2VpZ2h0OmJvbGQ7Zm9udC1mYW1pbHk6QXJpYWwsIEhlbHZldGljYSwgT3BlbiBTYW5zLCBzYW5zLXNlcmlmLCBtb25vc3BhY2U7Zm9udC1zaXplOjEwcHQgfSBdXT48L3N0eWxlPjwvZGVmcz48ZyBpZD0iaG9sZGVyXzE1NmQ4NGJiNTMyIj48cmVjdCB3aWR0aD0iMTQwIiBoZWlnaHQ9IjE0MCIgZmlsbD0iI0VFRUVFRSIvPjxnPjx0ZXh0IHg9IjQ0LjY4NzUiIHk9Ijc0LjM2NDA2MjUiPjE0MHgxNDA8L3RleHQ+PC9nPjwvZz48L3N2Zz4=\" data-holder-rendered=\"true\" style=\"width: 100%; max-height: 140px;\">'; // temporary gray image as a placeholder until images are addded to the data
+// temporary gray image as a placeholder until images are addded to the data
+var imagePlaceholder = 'data:image\/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9InllcyI\/PjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iMTQwIiBoZWlnaHQ9IjE0MCIgdmlld0JveD0iMCAwIDE0MCAxNDAiIHByZXNlcnZlQXNwZWN0UmF0aW89Im5vbmUiPjwhLS0KU291cmNlIFVSTDogaG9sZGVyLmpzLzE0MHgxNDAKQ3JlYXRlZCB3aXRoIEhvbGRlci5qcyAyLjYuMC4KTGVhcm4gbW9yZSBhdCBodHRwOi8vaG9sZGVyanMuY29tCihjKSAyMDEyLTIwMTUgSXZhbiBNYWxvcGluc2t5IC0gaHR0cDovL2ltc2t5LmNvCi0tPjxkZWZzPjxzdHlsZSB0eXBlPSJ0ZXh0L2NzcyI+PCFbQ0RBVEFbI2hvbGRlcl8xNTZkODRiYjUzMiB0ZXh0IHsgZmlsbDojQUFBQUFBO2ZvbnQtd2VpZ2h0OmJvbGQ7Zm9udC1mYW1pbHk6QXJpYWwsIEhlbHZldGljYSwgT3BlbiBTYW5zLCBzYW5zLXNlcmlmLCBtb25vc3BhY2U7Zm9udC1zaXplOjEwcHQgfSBdXT48L3N0eWxlPjwvZGVmcz48ZyBpZD0iaG9sZGVyXzE1NmQ4NGJiNTMyIj48cmVjdCB3aWR0aD0iMTQwIiBoZWlnaHQ9IjE0MCIgZmlsbD0iI0VFRUVFRSIvPjxnPjx0ZXh0IHg9IjQ0LjY4NzUiIHk9Ijc0LjM2NDA2MjUiPjE0MHgxNDA8L3RleHQ+PC9nPjwvZz48L3N2Zz4=';
 
+//begin gloabl variables
 var shelters = JSON.parse(data);
-var filters = []; // a variable that will hold the current search query
-var theQuery = document.getElementById('q-input');
-var theSuggestions = document.getElementById('q-suggestions');
-var theSearch = document.getElementById('search');
-var initMap = true;
-var theMap = {};
-var resultsView = 'results';
+var filters = {pet: {breed: ''}};
+//var theMap = createMap('map', 33.6496328, -117.74345);
+var theMap = createMap('map', shelters[0]);
 
-theSearch.setAttribute('data-action', 'showBreed');
-theQuery.addEventListener('input', displaySuggestions);
-
-document.getElementById('logo').setAttribute('data-action', 'showHero');
-document.getElementById('close').setAttribute('data-action', 'hideDetails');
-
+document.getElementById('breed').addEventListener('input', suggest);
 document.body.addEventListener('click', handleClick);
+//theMap.on('locationfound', function(e) { alert(e.latlng); });
 
-function handleClick (clicked) {
+function handleClick(clicked) {
   var action = '';
   var content = '';
   var target = clicked.target;
 
-  // Test if the target does not have an attribute named data-action, but does have a parent. If it does, run up the DOM tree to find a potential data-action.
   while (!(target.hasAttribute('data-action')) && target.parentNode) {
     target = target.parentNode;
-    if (typeof target.hasAttribute !== 'function') { break; } // Break out of loop if the target no longer has the hasAttribute function because we hit the DOM tree top.
+    if (typeof target.hasAttribute !== 'function') { return; }
   }
 
-  if (typeof target.hasAttribute === 'function') {
-    action = target.getAttribute('data-action');
+  action = target.getAttribute('data-action');
 
-    if (target.hasAttribute('data-content')) {
-      var content = target.getAttribute('data-content');
-    }
+  if (target.hasAttribute('data-content')) {
+    var content = target.getAttribute('data-content');
   }
 
   switch (action) {
-    case 'setQuery':
-      setQuery(content);
+    case 'complete-breed':
+      complete('breed', content);
       break;
-    case 'showBreed':
-      for (i = 0; i < filters.length; i++) {
-        if (filters[i].type === 'breed') {
-          filters.splice(i, 1);
-        }
-      }
-      if (content === '') { content = theQuery.value };
-      if (content !== '') {
-        filters.push({type: 'breed', value: content});
-      }
-
-      hideHero();
-      display(resultsView, shelters);
+    case 'filter-breed':
+      swap('headers', 'primary');
+      swap('views', 'results');
+      filters = _.extend(filters, {pet: {breed: content}});
+      display(shelters);
       break;
-    case 'showHero':
-      showHero();
+    case 'show-hero':
+      swap('headers', 'hero');
+      swap('views', 'home');
       break;
-    case 'showShelter':
-      hideHero();
-      showShelter(content);
-      resultsView = 'shelter-results';
-      display(resultsView, shelters);
+    case 'show-shelter':
+      modal(content, 'shelter');
       break;
-    case 'exitShelter':
-      hideShelter();
-      resultsView = 'results';
-      display(resultsView, shelters);
+    case 'show-animal':
+      modal(content, 'pet');
       break;
-    case 'showDetails':
-      var view = document.getElementById('details');
-      update(JSON.parse(content), view);
-      view.classList.remove('hidden');
-      document.getElementById('modal-close').classList.remove('hidden');
-      // refactor above with visiblity('details', 'hidden', false)
-      break;
-    case 'hideDetails':
-      document.getElementById('details').classList.add('hidden');
-      document.getElementById('modal-close').classList.add('hidden');
-      // refactor above with visiblity('details', 'hidden', true)
+    case 'hide-modal':
+      set('modal-close', 'hidden', true);
       break;
   }
 }
 
-// switch the primary view by
-function view(show) {
-  var theViews = document.getElementById('views');
-  var theOld = theViews.getElementsByClassName('active')[0];
+function swap(area, view) {
+  var theArea = document.getElementById(area);
+  var theActive = theArea.getElementsByClassName('active')[0];
+  var theView = document.getElementById(view);
 
-  if (theOld.id !== show) {
-    theOld.classList.remove('active');
-    theOld.classList.add('hidden');
-  }
-
-  document.getElementById(show).classList.remove('hidden');
-  document.getElementById(show).classList.add('active');
+  theActive.classList.remove('active');
+  theActive.classList.add('hidden');
+  theView.classList.remove('hidden');
+  theView.classList.add('active');
 }
 
-function hideShelter () {
-  filters = filters.filter(function (a) {
-    return a.type !== 'shelter';
-  })
-  document.getElementById('back').remove();
-  view('search-breed');
-  document.getElementById('shelter-info').classList.add('hidden');
-}
+function set(item, style, on) {
+  var theItem = document.getElementById(item);
 
-function showShelter(id) {
-  //add a filter that will only show animals from the passed shelter id
-  filters.push({type: 'shelter', value: id});
-
-  // show the shelter div on the page and display the shelter-info header
-  view('shelter');
-  document.getElementById('shelter-info').classList.remove('hidden');
-
-  // check to see if a back element exists and creat it if it does not
-  var theLogo = document.getElementById('logo');
-  if (document.getElementById('back')) { } // do nothing
-  else { // create a back element and append it to the logo text
-    var theBack = document.createElement('span');
-    theBack.id = 'back';
-    theBack.classList.add('small');
-    theBack.textContent = ' – back';
-    theBack.setAttribute('data-action', 'exitShelter');
-    theLogo.appendChild(theBack);
-  }
-
-  // grab the shelter that we should be displaying
-  var shelter;
-  for (var i = 0; i < shelters.length; i++) {
-    if (shelters[i].id === id) {
-      shelter = shelters[i];
-      i = shelters.length;
-    }
-  }
-
-  // if we found a shelter display its map
-  if (shelter) {
-    var lat = shelter.latitude;
-    var long = shelter.longitude;
-
-    // only call showMap if we haven't done it once already
-    if (initMap) {
-      theMap = showMap('map', lat, long);
-      initMap = false;
-    }
-
-    // place a marker on the map for this shelter and add a pop up to it
-    var marker = L.marker([lat, long]).addTo(theMap);
-    theMap.setView([lat, long]);
-    theMap.setZoom(15);
-
-    marker.bindPopup(
-      '<h6>' + shelter.name + '<h6>' +
-      shelter.address.number + ' ' + shelter.address.street + '<br>' +
-      shelter.address.city + ', ' + shelter.address.state + ' ' + shelter.address.zip
-    ).openPopup();
+  if (on) {
+    theItem.classList.add(style);
+  } else {
+    theItem.classList.remove(style);
   }
 }
 
-// add a leafletjs map to a given element with id matching passed id
-function showMap(id, lat, long) {
-  var theMap = L.map(id).setView([lat, long], 15);
+function createMap(id, shelter) {
+  var lat = shelter.latitude,
+      long = shelter.longitude,
+      theMap = L.map(id).setView([lat, long], 15);
 
   L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
     attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
@@ -170,28 +86,18 @@ function showMap(id, lat, long) {
     accessToken: 'pk.eyJ1IjoiZmJsYW50b24iLCJhIjoiY2lzamNid2M1MDI3ODJ6b2Npd215Nm4xbSJ9.mgpAAP0NC5HRxKmfyP-eOQ'
   }).addTo(theMap);
 
+  var marker = L.marker([lat, long]).addTo(theMap);
+
+  marker.bindPopup(
+    '<h5 class=\'centered\'>' + shelter.name + '<h5>').openPopup();
+
   return theMap;
 }
 
-// Need to be able to show and hide our hero elements on demand
-function hideHero() {
-  var theHero = document.getElementById('hero');
-  theHero.classList.add('hidden');
-  var theHeader = document.getElementById('header');
-  theHeader.classList.remove('heroed');
-}
-
-function showHero() {
-  theHero = document.getElementById('hero');
-  theHero.classList.remove('hidden');
-  var theHeader = document.getElementById('header');
-  theHeader.classList.add('heroed');
-}
-
-function setQuery(content) {
-    theQuery.value = content;
-    query = content;
-    clear(theSuggestions);
+function complete(destination, content) {
+    document.getElementById(destination).value = content;
+    document.getElementById('filter-breed').setAttribute('data-content', content);
+    clear(document.getElementById('breed-suggestions'));
 }
 
 function clear(element) {
@@ -200,145 +106,138 @@ function clear(element) {
   }
 }
 
-function displaySuggestions() {
-  var value = theQuery.value.toLowerCase();
-  matches = [];
+function returnBreeds(animals, term) {
+  return _.chain(animals).pluck('breeds').flatten()
+            .filter(function(breed) {
+              return breed.toLowerCase().indexOf(term.toLowerCase()) !== -1;
+            }).value();
+}
 
-  if (value !== '') {
-    for (var item in animals) {
-      for (var i = 0; i < animals[item].breeds.length; i++) {
-        if (animals[item].breeds[i].toLowerCase().indexOf(value) !== -1) {
-          matches.push(animals[item].breeds[i]);
-        }
-      }
-    }
+function makeList(array, limit) {
+  var theList = [];
+
+  for(var i = 0; i < array.length && i < 10; i++) {
+    theList.push(
+      element('li', {class: 'list-group-item', 'data-action': 'complete-breed', 'data-content': array[i]}, array[i])
+    );
+    if (i === limit-1) { break; }
   }
 
+  return theList;
+}
+
+function suggest(breeds) {
+  var term = breeds.target.value;
+  var matched = [];
+  var theSuggestions = document.getElementById('breed-suggestions');
   clear(theSuggestions);
 
-  matches.sort(); // sort alphabtically
-  matches.sort(function(a,b) { // and then by how soon our query appears
-    return (a.toLowerCase().indexOf(value) - b.toLowerCase().indexOf(value));
+  if (term !== '') {
+    matched = returnBreeds(animals, term);
+  }
+
+  // sort the matched breeds alphabetically and then by how soon the term appears
+  matched.sort();
+  matched.sort(function(a,b) {
+    return (a.toLowerCase().indexOf(term) - b.toLowerCase().indexOf(term));
   });
 
-  for (var j = 0; j < matches.length && j < 10; j++) {
-    if (!((matches.length === 1) && (matches[0].toLowerCase() === value))) {
-      var theSuggestion = document.createElement('li');
-      theSuggestion.classList.add('list-group-item');
-      theSuggestion.setAttribute('data-action', 'setQuery');
-      theSuggestion.setAttribute('data-content', matches[j]);
-      theSuggestion.textContent = matches[j];
-      theSuggestions.appendChild(theSuggestion);
-    }
+  // add the matched breeds to theSuggestions DOM element
+  if (!((matched.length === 1) && (matched[0].toLowerCase() === term))) {
+    append(theSuggestions, makeList(matched, 10));
   }
+
+  document.getElementById('filter-breed').setAttribute('data-content', term);
 }
 
-function display (where, shelters) {
+function display(shelters, where) {
+  if (!where) { where = 'results'; }
+
   var theResults = document.getElementById(where);
-
-  clear(theResults);
-
+  var pets = filter(shelters);
   var count = 0;
 
-  for (var i = 0; i < shelters.length; i++) {
-    for (j = 0; j < shelters[i].pets.length; j++) {
-      if (shouldDisplay(i, j)) {
-        var theRow = createPanel(shelters[i], j);
-        theResults.appendChild(theRow);
-        count++;
-      }
-    }
-  }
-
-  theEntry = document.createElement('div');
-  theEntry.textContent = count;
-  theResults.appendChild(theEntry);
+  clear(theResults);
+  theResults.appendChild(element('div', {id: 'number-displayed'}, _.size(pets)));
+  append(theResults, _.map(pets, function(pet) {
+    return (createCard(getShelter({petID: pet.id}), pet));
+  }));
 }
 
-function shouldDisplay(shelter, pet) {
-  var should = true;
-
-  // Iterate through the filters array, perform an && operation on the current value of the should variable along with a comparison operation to see if the current pet should be displayed. If any case fails the item should not be display and should becomes false. At that point we can exit the loop.
-  for (var i = 0; (i < filters.length) && should; i++) {
-    switch (filters[i].type) {
-      case 'breed':
-        should = (should && (shelters[shelter].pets[pet].breed.toLowerCase() === filters[i].value.toLowerCase()));
-        break;
-      case 'shelter':
-        should = (should && (shelters[shelter].id === filters[i].value));
-        break;
-    }
+function filter(array) {
+  if (filters.shelter) {
+    filteredShelters = _.filter(shelters, filters.shelter);
+  } else {
+    filteredShelters = shelters;
   }
 
-  return should;
+  if (filters.pet) {
+    filteredPets = _.chain(filteredShelters)
+                    .pluck('pets')
+                    .flatten()
+                    .filter(filters.pet).value();
+  } else {
+    filteredPets = _.chain(filteredShelters)
+                    .pluck('pets')
+                    .flatten().value();
+  }
+
+  return filteredPets;
 }
 
-function getShelter(id) {
-  return shelters.find(function(shelter) {
-    return shelter.id === id;
+function getShelter(obj) {
+  if (obj.shelterID) {
+    return _.find(shelters, {id: obj.shelterID});
+  } else if (obj.petID) {
+    return _.find(shelters, function(shelter) { return (_.find(shelter.pets, {id: obj.petID})); });
+  }
+}
+
+function getPet(id, shelter) {
+  return shelter.pets.find(function(pet) {
+    return pet.id === id;
   });
 }
 
-function getPet(shelter, id) {
-  return shelter.pets.find(function(pet) {
-    return pet.id === id;
-  })
+function modal(data, view) {
+  var theContent = document.getElementById(view);
+  clear(theContent);
+  swap('modals', view);
+
+  switch (view) {
+    case 'pet':
+      var dataObject = JSON.parse(data);
+      var shelter = getShelter({shelterID: dataObject.shelterID});
+      var pet = getPet(dataObject.petID, shelter);
+
+      theContent.appendChild(petTemplate(shelter, pet));
+      break;
+    case 'shelter':
+      var shelter = getShelter({shelterID: data});
+      theContent.appendChild(shelterTemplate(shelter));
+      theMap = createMap('map', shelter);
+      break;
+  }
+
+  set('modal-close', 'hidden', false);
 }
 
-function update(animal, view) {
-  var shelter = getShelter(animal.shelter);
-  var pet = getPet(shelter, animal.pet);
-  var elements = [];
-
-  var theAnimal = document.getElementById('animal');
-  var theDescription = document.getElementById('description');
-  clear(theAnimal);
-  clear(theDescription);
-
-  var theImage = document.createElement('div');
-  theImage.innerHTML = imgHTML;
-  theImage.classList.add('centered');
-  theAnimal.appendChild(theImage);
-
-  // create elements for the left hand side of the modal dialog
-  elements.push(
-    element('h3', pet.name, ['centered']),
-    element('p', pet.breed + ' | ' + pet.gender),
-    element('p', 'Adoption Fee: $' + pet.fee),
-    element('p', 'Availability: ' + pet.status)
-  );
-  append(theAnimal, elements);
-
-  // create elements for the right hand side of the modal dialog
-  elements = [];
-  elements.push(
-    element('h3', 'Description'),
-    element('p', pet.description),
-    element('hr'),
-    element('h3', shelter.name),
-    element('pre', shelter.address.number
-      + ' '  + shelter.address.street
-      + '\n' + shelter.address.city
-      + ', ' + shelter.address.state
-      + ' '  + shelter.address.zip
-      + '\n' + shelter.phone),
-    element('p', shelter.description)
-  );
-  append(theDescription, elements);
-}
-
-function element(tag, contents, styles, id) {
+function element(tag, attributes, contents) {
   var theElement = document.createElement(tag);
 
-  if (contents) { theElement.textContent = contents; }
-
-  if (styles) {
-    for (var i = 0; i< styles.length; i++) {
-      theElement.classList.add(styles[i]);
+  if (attributes) {
+    for (var attribute in attributes) {
+      theElement.setAttribute(attribute, attributes[attribute]);
     }
   }
 
-  if (id) { theElement.id = id }
+  if (Array.isArray(contents)) {
+    contents.forEach(function(item){
+      theElement.appendChild(item);
+    });
+  } else if (typeof contents !== 'undefined') {
+    theElement.textContent = contents;
+  }
 
   return theElement;
 }
@@ -347,65 +246,89 @@ function append(element, children) {
   children.forEach(function(child) {
     element.appendChild(child);
   });
+
+  return element;
 }
 
-function createPanel (shelter, pet) {
-  var theRow = document.createElement('div');  // create a div for the resulting item
-  theRow.classList.add('col-md-4', 'entry');
-  var thePanel = document.createElement('div');
-  thePanel.classList.add('panel','panel-default');
-  thePanel.setAttribute('data-action', 'showDetails');
-  thePanel.setAttribute('data-content',
-    JSON.stringify({shelter: shelter.id, pet: shelter.pets[pet].id})
-  );
+function addTo(element, attributes) {
+  attributes.forEach(function(attribute) {
+    element.setAttribute(attribute[0], attribute[1]);
+  });
 
-
-  var thePanelBody = document.createElement('div');
-  thePanelBody.classList.add('panel-body');
-  thePanel.appendChild(thePanelBody);
-
-  var theImageRow = document.createElement('div');
-  theImageRow.classList.add('row', 'centered');
-  theImageRow.innerHTML = imgHTML;
-  thePanelBody.appendChild(theImageRow);
-
-  var thePetName = document.createElement('h5');
-  thePetName.textContent = shelter.pets[pet].name;
-  thePetName.classList.add('centered');
-  thePanelBody.appendChild(thePetName);
-
-  var theHR = document.createElement('hr');
-  thePanelBody.appendChild(theHR);
-
-  var theBreed = document.createElement('p');
-  theBreed.textContent = shelter.pets[pet].breed;
-  thePanelBody.appendChild(theBreed);
-
-  var theAgeGenderSize = document.createElement('p');
-  theAgeGenderSize.textContent =
-  parseInt(shelter.pets[pet].age/12) + ' yrs '
-  + parseInt(shelter.pets[pet].age%12) + ' mos | '
-  + shelter.pets[pet].gender;
-  // + ' | ' + shelters[i].pets[j].weight;
-  thePanelBody.appendChild(theAgeGenderSize);
-
-  var theRescueParagraph = document.createElement('p');
-  var theRescueName = document.createElement('a');
-  theRescueName.setAttribute('data-action', 'showShelter');
-  theRescueName.setAttribute('data-content', shelter.id);
-  theRescueName.textContent = shelter.name;
-  theRescueParagraph.appendChild(theRescueName);
-  thePanelBody.appendChild(theRescueParagraph);
-
-  var theCityState = document.createElement('p');
-  theCityState.textContent =
-  shelter.address.city + ' '
-  + shelter.address.state;
-
-  thePanelBody.appendChild(theCityState);
-  theRow.appendChild(thePanel);
-
-  return theRow;
+  return element;
 }
 
-display('results', shelters);
+function createCard(shelter, pet) {
+  return element('div', {class: 'col-md-4'},
+  [ element('div',
+    { class: 'entry',
+    'data-action': 'show-animal',
+    'data-content': JSON.stringify({shelterID: shelter.id, petID: pet.id}) },
+    [ element('img', {src: imagePlaceholder, class: 'placeholder'}),
+      element('h5', {class: 'centered'}, pet.name),
+      element('hr'),
+      element('p', {}, pet.breed),
+      element('p', {}, parseInt(pet.age/12) + ' yrs ' + parseInt(pet.age%12) + ' mos | ' + pet.gender),
+      element('p', {},
+        [ element('a', {'data-action': 'show-shelter','data-content': shelter.id }, shelter.name) ]),
+      element('p', {}, shelter.address.city + ' ' + shelter.address.state)
+    ])
+  ]);
+}
+
+function pets(shelterID) {
+  var shelter = getShelter({shelterID: shelterID});
+  return _.map(shelter.pets, function(pet) {
+     return createCard(this, pet);
+   }, shelter);
+}
+
+function petTemplate(shelter, pet) {
+  return element('div', {class: 'jumbotron'}, [
+    element('div', {class: 'col-xs-4'}, [
+      element('img', {src: imagePlaceholder, class: 'placeholder'}),
+      element('h3', {class: 'centered'}, pet.name),
+      element('p', {}, pet.breed + ' | ' + pet.gender),
+      element('p', {}, 'Adoption Fee: $' + pet.fee),
+      element('p', {}, 'Availability: ' + pet.status)
+    ]),
+    element('div', {class: 'col-xs-8'}, [
+      element('h3', {}, 'Description'),
+      element('p', {}, pet.description),
+      element('hr'),
+      element('h3', {'data-action': 'show-shelter','data-content': shelter.id }, shelter.name),
+      element('pre', {'data-action': 'show-shelter','data-content': shelter.id }, shelter.address.number
+        + ' '  + shelter.address.street
+        + '\n' + shelter.address.city
+        + ', ' + shelter.address.state
+        + ' '  + shelter.address.zip
+        + '\n' + shelter.phone),
+      element('p', {}, shelter.description)
+    ])
+  ]);
+}
+
+function shelterTemplate(shelter) {
+  return element('div', {class: 'jumbotron'}, [
+    element('div', {id: 'map'}),
+    element('div', {class: 'col-xs-4'}, [
+      element('h3', {class: 'centered', 'data-action': 'show-shelter','data-content': shelter.id }, shelter.name),
+      element('pre', {class: 'centered', 'data-action': 'show-shelter','data-content': shelter.id }, shelter.address.number
+        + ' '  + shelter.address.street
+        + '\n' + shelter.address.city
+        + ', ' + shelter.address.state
+        + ' '  + shelter.address.zip
+        + '\n' + shelter.phone)
+    ]),
+    element('div', {class: 'col-xs-8'}, [
+      element('h3', {}, 'Description'),
+      element('p', {}, shelter.description),
+      element('hr'),
+      element('h3', {}, 'All Pets'),
+      element('div', {id: 'pets'}, pets(shelter.id))
+    ])
+  ]);
+}
+
+display(shelters);
+theMap.locate();
