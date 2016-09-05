@@ -53,6 +53,10 @@ video {
   height: 100vh;
 }
 
+#pets .col-md-4 {
+  width: 100%;
+}
+
 #hero.active + #primary + #breed-filter {
   position: absolute;
   top: 75vh;
@@ -113,10 +117,6 @@ video {
 #modals > div {
   position: absolute;
   top: 0;
-}
-
-.jumbotron pre {
-  display: inline-block;
 }
 
 #modal-close {
