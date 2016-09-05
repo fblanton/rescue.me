@@ -41,17 +41,10 @@ function handleClick(clicked) {
       swap('views', 'home');
       break;
     case 'show-shelter':
-      set('hero', 'hidden', true);
-      set('header', 'heroed', false);
-      showShelter(content);
-      display(shelters);
-      break;
-    case 'exitShelter':
-      hideShelter();
-      display(shelters);
+      modal(content, 'shelter');
       break;
     case 'show-animal':
-      modal(content, 'animal');
+      modal(content, 'pet');
       break;
     case 'hide-modal':
       set('modal-close', 'hidden', true);
@@ -138,7 +131,6 @@ function showShelter(id) {
   }
 }
 
-// add a leafletjs map to a given element with id matching passed id
 function createMap(id, lat, long) {
   var theMap = L.map(id).setView([lat, long], 15);
 
@@ -269,13 +261,14 @@ function getPet(id, shelter) {
   });
 }
 
-function modal(data, type) {
-  var theContent = document.getElementById('modal-content');
+function modal(data, view) {
+  var theContent = document.getElementById(view);
   clear(theContent);
+  swap('modals', view);
 
-  if (type === 'animal') {
+  if (view === 'pet') {
     var dataObject = JSON.parse(data);
-    var shelter = getShelter(dataObject.shelterID);
+    var shelter = getShelter({shelterID: dataObject.shelterID});
     var pet = getPet(dataObject.petID, shelter);
 
     theContent.appendChild(
