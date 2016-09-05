@@ -154,7 +154,7 @@ function display(shelters, where) {
   if (!where) { where = 'results'; }
 
   var theResults = document.getElementById(where);
-  var pets = filter(shelters);
+  var pets = filter(shelters, filters);
   var count = 0;
 
   clear(theResults);
@@ -164,7 +164,7 @@ function display(shelters, where) {
   }));
 }
 
-function filter(array) {
+function filter(array, filters) {
   if (filters.shelter) {
     filteredShelters = _.filter(shelters, filters.shelter);
   } else {
@@ -245,14 +245,6 @@ function element(tag, attributes, contents) {
 function append(element, children) {
   children.forEach(function(child) {
     element.appendChild(child);
-  });
-
-  return element;
-}
-
-function addTo(element, attributes) {
-  attributes.forEach(function(attribute) {
-    element.setAttribute(attribute[0], attribute[1]);
   });
 
   return element;
