@@ -48,9 +48,12 @@ function handleClick(clicked) {
       modal(content, 'pet');
       break;
     case 'hide-modal':
-      swap('modals', false);
+      swap('modals');
       set('modal-close', 'hidden', true);
       break;
+    case 'adopt':
+      swap('modals', 'adopt', true)
+      break
   }
 }
 
@@ -204,9 +207,9 @@ function getPet(id, shelter) {
   });
 }
 
-function modal(data, view) {
+function modal(data, view, keep) {
   var theContent = document.getElementById(view);
-  clear(theContent);
+  if (!keep) { clear(theContent); }
   swap('modals', view);
 
   switch (view) {
@@ -287,7 +290,11 @@ function petTemplate(shelter, pet) {
       element('h3', {class: 'centered'}, pet.name),
       element('p', {}, pet.breed + ' | ' + pet.gender),
       element('p', {}, 'Adoption Fee: $' + pet.fee),
-      element('p', {}, 'Availability: ' + pet.status)
+      element('p', {},
+      ( pet.status === 'Available'
+        ? [element('a', {class: 'btn btn-primary', 'data-action': 'adopt', 'data-content': pet.id}, 'ADOPT NOW')]
+        : pet.status )
+      )
     ]),
     element('div', {class: 'col-xs-8'}, [
       element('h3', {}, 'Description'),
