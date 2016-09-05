@@ -48,6 +48,7 @@ function handleClick(clicked) {
       modal(content, 'pet');
       break;
     case 'hide-modal':
+      swap('modals', false);
       set('modal-close', 'hidden', true);
       break;
   }
@@ -56,12 +57,17 @@ function handleClick(clicked) {
 function swap(area, view) {
   var theArea = document.getElementById(area);
   var theActive = theArea.getElementsByClassName('active')[0];
-  var theView = document.getElementById(view);
 
-  theActive.classList.remove('active');
-  theActive.classList.add('hidden');
-  theView.classList.remove('hidden');
-  theView.classList.add('active');
+  if (theActive) {
+    theActive.classList.remove('active');
+    theActive.classList.add('hidden');
+  }
+
+  if (view) {
+    var theView = document.getElementById(view);
+    theView.classList.remove('hidden');
+    theView.classList.add('active');
+  }
 }
 
 function set(item, style, on) {
@@ -155,7 +161,6 @@ function display(shelters, where) {
 
   var theResults = document.getElementById(where);
   var pets = filter(shelters, filters);
-  var count = 0;
 
   clear(theResults);
   theResults.appendChild(element('div', {id: 'number-displayed'}, _.size(pets)));

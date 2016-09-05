@@ -103,6 +103,7 @@ video {
   left: 10vw;
   -webkit-box-shadow: 0 0 20px rgba(0,0,0,.3);
           box-shadow: 0 0 20px rgba(0,0,0,.3);
+  transition: top .3s;
 }
 
 #modal-content .jumbotron {
@@ -134,6 +135,10 @@ video {
   display: unset !important;
   pointer-events: none;
   opacity: 0;
+}
+
+#modal-close.hidden > #modal-content{
+  top: -500px;
 }
 
 #modal-x {
