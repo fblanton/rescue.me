@@ -3,7 +3,7 @@ var imagePlaceholder = 'data:image\/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlb
 
 //begin gloabl variables
 var shelters = JSON.parse(data);
-var filters = [];
+var filters = {};
 var theMap = createMap('map', 33.6496328, -117.74345);
 
 document.getElementById('breed').addEventListener('input', suggest);
@@ -33,7 +33,7 @@ function handleClick(clicked) {
     case 'filter-breed':
       swap('headers', 'primary');
       swap('views', 'results');
-      add('breed', content, filters);
+      add(filters, {pet: {breed: content}});
       display(shelters);
       break;
     case 'show-hero':
@@ -70,16 +70,8 @@ function swap(area, view) {
   theView.classList.add('active');
 }
 
-function add(type, content, filters) {
-  for (i = 0; i < filters.length; i++) {
-    if (filters[i].type === 'breed') {
-      filters.splice(i, 1);
-    }
-  }
-  if (content === '') { content = document.getElementById('breed').value };
-  if (content !== '') {
-    filters.push({type: 'breed', value: content});
-  }
+function add(filters, filter) {
+  filters = _.extend(filters, filter);
 }
 
 function set(item, style, on) {
@@ -186,6 +178,19 @@ animals.returnBreeds = function(term) {
   return matched;
 }
 
+function makeList(array, limit) {
+  var theList = [];
+
+  for(var i = 0; i < array.length && i < 10; i++) {
+    theList.push(
+      element('li', {class: 'list-group-item', 'data-action': 'complete-breed', 'data-content': array[i]}, array[i])
+    );
+    if (i === limit-1) { break; }
+  }
+
+  return theList;
+}
+
 function suggest(breeds) {
   var term = breeds.target.value.toLowerCase();
   var matched = [];
@@ -204,31 +209,24 @@ function suggest(breeds) {
 
   // add the matched breeds to theSuggestions DOM element
   if (!((matched.length === 1) && (matched[0].toLowerCase() === term))) {
-    for(var i = 0; i < matched.length && i < 10; i++) {
-      theSuggestions.appendChild(
-        element('li', {class: 'list-group-item', 'data-action': 'complete-breed', 'data-content': matched[i]}, matched[i])
-      );
-    }
+    append(theSuggestions, makeList(matched, 10));
   }
 
   document.getElementById('filter-breed').setAttribute('data-content', term);
 }
 
-function display(shelters) {
-  var theResults = document.getElementById('results');
-
-  clear(theResults);
-
+function display(shelters, where) {
+  if (!where) { where = 'results'; }
+  var theResults = document.getElementById(where);
+  var pets = [];
   var count = 0;
 
-  for (var i = 0; i < shelters.length; i++) {
-    for (j = 0; j < shelters[i].pets.length; j++) {
-      if (shouldDisplay(i, j)) {
-        var theCard = createCard(shelters[i], shelters[i].pets[j]);
-        theResults.appendChild(theCard);
-        count++;
-      }
-    }
+  clear(theResults);
+  pets = filter(shelters);
+
+  for (var i = 0; i < pets.length; i++) {
+    var shelter = getShelter({petID: pets[i].id});
+    theResults.appendChild(createCard(shelter, pets[i]));
   }
 
   theEntry = document.createElement('div');
@@ -236,29 +234,33 @@ function display(shelters) {
   theResults.appendChild(theEntry);
 }
 
-function shouldDisplay(shelter, pet) {
-  var should = true;
-
-  for (var i = 0; (i < filters.length); i++) {
-    switch (filters[i].type) {
-      case 'breed':
-        should = shelters[shelter].pets[pet].breed.toLowerCase() === filters[i].value.toLowerCase();
-        if(!should) { return false; }
-        break;
-      case 'shelter':
-        should = shelters[shelter].id === filters[i].value;
-        if(!should) { return false; }
-        break;
-    }
+function filter(array) {
+  if (filters.shelter) {
+    filteredShelters = _.filter(shelters, filters.shelter);
+  } else {
+    filteredShelters = shelters;
   }
 
-  return should;
+  if (filters.pet) {
+    filteredPets = _.chain(filteredShelters)
+                    .pluck('pets')
+                    .flatten()
+                    .filter(filters.pet).value();
+  } else {
+    filteredPets = _.chain(filteredShelters)
+                    .pluck('pets')
+                    .flatten().value();
+  }
+
+  return filteredPets;
 }
 
-function getShelter(id) {
-  return shelters.find(function(shelter) {
-    return shelter.id === id;
-  });
+function getShelter(obj) {
+  if (obj.shelterID) {
+    return _.find(shelters, {id: obj.shelterID});
+  } else if (obj.petID) {
+    return _.find(shelters, function(shelter) { return (_.find(shelter.pets, {id: obj.petID})); });
+  }
 }
 
 function getPet(id, shelter) {
