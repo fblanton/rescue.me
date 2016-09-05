@@ -4,7 +4,8 @@ var imagePlaceholder = 'data:image\/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlb
 //begin gloabl variables
 var shelters = JSON.parse(data);
 var filters = {};
-var theMap = createMap('map', 33.6496328, -117.74345);
+//var theMap = createMap('map', 33.6496328, -117.74345);
+var theMap = createMap('map', shelters[0]);
 
 document.getElementById('breed').addEventListener('input', suggest);
 document.body.addEventListener('click', handleClick);
@@ -77,62 +78,10 @@ function set(item, style, on) {
   }
 }
 
-function hideShelter() {
-  filters = filters.filter(function (a) {
-    return a.type !== 'shelter';
-  })
-  document.getElementById('back').remove();
-  document.getElementById('shelter-info').classList.add('hidden');
-}
-
-function showShelter(id) {
-  //add a filter that will only show animals from the passed shelter id
-  filters.push({type: 'shelter', value: id});
-
-  // show the shelter div on the page and display the shelter-info header
-  document.getElementById('shelter-info').classList.remove('hidden');
-
-  // check to see if a back element exists and creat it if it does not
-  var theLogo = document.getElementById('logo');
-  if (document.getElementById('back')) { } // do nothing
-  else { // create a back element and append it to the logo text
-    var theBack = document.createElement('span');
-    theBack.id = 'back';
-    theBack.classList.add('small');
-    theBack.textContent = ' – back';
-    theBack.setAttribute('data-action', 'exitShelter');
-    theLogo.appendChild(theBack);
-  }
-
-  // grab the shelter that we should be displaying
-  var shelter;
-  for (var i = 0; i < shelters.length; i++) {
-    if (shelters[i].id === id) {
-      shelter = shelters[i];
-      i = shelters.length;
-    }
-  }
-
-  // if we found a shelter display its map
-  if (shelter) {
-    var lat = shelter.latitude;
-    var long = shelter.longitude;
-
-    // place a marker on the map for this shelter and add a pop up to it
-    theMap.remove();
-    theMap = createMap('map', lat, long);
-    var marker = L.marker([lat, long]).addTo(theMap);
-
-    marker.bindPopup(
-      '<h6>' + shelter.name + '<h6>' +
-      shelter.address.number + ' ' + shelter.address.street + '<br>' +
-      shelter.address.city + ', ' + shelter.address.state + ' ' + shelter.address.zip
-    ).openPopup();
-  }
-}
-
-function createMap(id, lat, long) {
-  var theMap = L.map(id).setView([lat, long], 15);
+function createMap(id, shelter) {
+  var lat = shelter.latitude,
+      long = shelter.longitude,
+      theMap = L.map(id).setView([lat, long], 15);
 
   L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
     attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
@@ -140,6 +89,14 @@ function createMap(id, lat, long) {
     id: 'fblanton.19653a9c',
     accessToken: 'pk.eyJ1IjoiZmJsYW50b24iLCJhIjoiY2lzamNid2M1MDI3ODJ6b2Npd215Nm4xbSJ9.mgpAAP0NC5HRxKmfyP-eOQ'
   }).addTo(theMap);
+
+  var marker = L.marker([lat, long]).addTo(theMap);
+
+  marker.bindPopup(
+    '<h6>' + shelter.name + '<h6>' +
+    shelter.address.number + ' ' + shelter.address.street + '<br>' +
+    shelter.address.city + ', ' + shelter.address.state + ' ' + shelter.address.zip
+  ).openPopup();
 
   return theMap;
 }
@@ -266,35 +223,19 @@ function modal(data, view) {
   clear(theContent);
   swap('modals', view);
 
-  if (view === 'pet') {
-    var dataObject = JSON.parse(data);
-    var shelter = getShelter({shelterID: dataObject.shelterID});
-    var pet = getPet(dataObject.petID, shelter);
+  switch (view) {
+    case 'pet':
+      var dataObject = JSON.parse(data);
+      var shelter = getShelter({shelterID: dataObject.shelterID});
+      var pet = getPet(dataObject.petID, shelter);
 
-    theContent.appendChild(
-      element('div', {class: 'jumbotron'}, [
-        element('div', {class: 'col-xs-4'}, [
-          element('img', {src: imagePlaceholder, class: 'placeholder'}),
-          element('h3', {class: 'centered'}, pet.name),
-          element('p', {}, pet.breed + ' | ' + pet.gender),
-          element('p', {}, 'Adoption Fee: $' + pet.fee),
-          element('p', {}, 'Availability: ' + pet.status)
-        ]),
-        element('div', {class: 'col-xs-8'}, [
-          element('h3', {}, 'Description'),
-          element('p', {}, pet.description),
-          element('hr'),
-          element('h3', {}, shelter.name),
-          element('pre', {}, shelter.address.number
-            + ' '  + shelter.address.street
-            + '\n' + shelter.address.city
-            + ', ' + shelter.address.state
-            + ' '  + shelter.address.zip
-            + '\n' + shelter.phone),
-          element('p', {}, shelter.description)
-        ])
-      ])
-    );
+      theContent.appendChild(petTemplate(shelter, pet));
+      break;
+    case 'shelter':
+      var shelter = getShelter({shelterID: data});
+      theContent.appendChild(shelterTemplate(shelter));
+      theMap = createMap('map', shelter);
+      break;
   }
 
   set('modal-close', 'hidden', false);
@@ -350,6 +291,50 @@ function createCard(shelter, pet) {
       element('p', {},
         [ element('a', {'data-action': 'show-shelter','data-content': shelter.id }, shelter.name) ]),
       element('p', {}, shelter.address.city + ' ' + shelter.address.state)
+    ])
+  ]);
+}
+
+function shelterTemplate(shelter) {
+  return element('div', {class: 'jumbotron'}, [
+    element('div', {id: 'map'}),
+    element('div', {class: 'col-xs-4'}, [
+      element('h3', {class: 'centered'}, shelter.name),
+      element('pre', {}, shelter.address.number
+        + ' '  + shelter.address.street
+        + '\n' + shelter.address.city
+        + ', ' + shelter.address.state
+        + ' '  + shelter.address.zip
+        + '\n' + shelter.phone)
+    ]),
+    element('div', {class: 'col-xs-8'}, [
+      element('h3', {}, 'Description'),
+      element('p', {}, shelter.description)
+    ])
+  ]);
+}
+
+function petTemplate(shelter, pet) {
+  return element('div', {class: 'jumbotron'}, [
+    element('div', {class: 'col-xs-4'}, [
+      element('img', {src: imagePlaceholder, class: 'placeholder'}),
+      element('h3', {class: 'centered'}, pet.name),
+      element('p', {}, pet.breed + ' | ' + pet.gender),
+      element('p', {}, 'Adoption Fee: $' + pet.fee),
+      element('p', {}, 'Availability: ' + pet.status)
+    ]),
+    element('div', {class: 'col-xs-8'}, [
+      element('h3', {}, 'Description'),
+      element('p', {}, pet.description),
+      element('hr'),
+      element('h3', {}, shelter.name),
+      element('pre', {}, shelter.address.number
+        + ' '  + shelter.address.street
+        + '\n' + shelter.address.city
+        + ', ' + shelter.address.state
+        + ' '  + shelter.address.zip
+        + '\n' + shelter.phone),
+      element('p', {}, shelter.description)
     ])
   ]);
 }

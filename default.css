@@ -78,6 +78,7 @@ video {
 
 #map {
   height: 250px;
+  top: -40px;
 }
 
 #shelter-info {
