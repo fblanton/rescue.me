@@ -283,6 +283,18 @@ function pets(shelterID) {
    }, shelter);
 }
 
+function status(pet) {
+  var status;
+
+  if (pet.status === 'Available') {
+    status = [element('a', {class: 'btn btn-primary', 'data-action': 'adopt', 'data-content': pet.id}, 'ADOPT NOW')];
+  } else {
+    status = pet.status;
+  }
+
+  return status;
+}
+
 function petTemplate(shelter, pet) {
   return element('div', {class: 'jumbotron'}, [
     element('div', {class: 'col-xs-4'}, [
@@ -290,11 +302,7 @@ function petTemplate(shelter, pet) {
       element('h3', {class: 'centered'}, pet.name),
       element('p', {}, pet.breed + ' | ' + pet.gender),
       element('p', {}, 'Adoption Fee: $' + pet.fee),
-      element('p', {},
-      ( pet.status === 'Available'
-        ? [element('a', {class: 'btn btn-primary', 'data-action': 'adopt', 'data-content': pet.id}, 'ADOPT NOW')]
-        : pet.status )
-      )
+      element('p', {}, status(pet))
     ]),
     element('div', {class: 'col-xs-8'}, [
       element('h3', {}, 'Description'),
