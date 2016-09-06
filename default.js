@@ -6,6 +6,7 @@ var shelters = JSON.parse(data);
 var filters = {pet: {breed: ''}};
 //var theMap = createMap('map', 33.6496328, -117.74345);
 var theMap = createMap('map', shelters[0]);
+var adoption = {requests: []};
 
 $('#breed').on('input', suggest);
 $('body').on('click', handleClick);
@@ -14,8 +15,23 @@ $('body').keyup(handleKey);
 //theMap.on('locationfound', function(e) { alert(e.latlng); });
 
 function handleSubmit(submitted) {
-  alert(submitted.target.id);
+  var theForm = submitted.target;
   submitted.preventDefault();
+
+  if (!theForm.checkValidity()) {
+    alert('Please confirm all the fields have been properly filled in.');
+    return;
+  }
+
+  switch (theForm.id) {
+    case 'apply':
+      inputApplication(theForm, adoption);
+      break;
+  }
+}
+
+function inputApplication(theForm, adoption) {
+  // iterate through $:inputs and attach them to adoption.requests as key: value;
 }
 
 function handleKey(key) {
@@ -321,7 +337,7 @@ function adoptionTemplate(pet) {
       element('div', {class: 'collapse', id: 'adoption-form'}, [
         element('p', {class: ''}, 'Apply to Adopt'),
         element('div', {class: 'well'}, [
-          element('form', {class: 'form-horizontal', id: 'apply'}, [
+          element('form', {class: 'form-horizontal', id: 'apply', 'data-content': pet.id}, [
             element('div', {class: 'form-group'}, [
               element('label', {for: 'input-name', class: 'col-sm-2 control-label'}, 'Name'),
               element('div', {class: 'col-sm-10'}, [
