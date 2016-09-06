@@ -287,12 +287,52 @@ function status(pet) {
   var status;
 
   if (pet.status === 'Available') {
-    status = [element('a', {class: 'btn btn-primary', 'data-action': 'adopt', 'data-content': pet.id}, 'ADOPT NOW')];
+    status = [element('button', {class: 'btn btn-primary', type: 'button', 'data-toggle': 'collapse', 'data-target': '#adoption-form', 'aria-expanded': 'false', 'aria-controls': 'adoption-form'}, 'ADOPT NOW')];
   } else {
     status = pet.status;
   }
 
   return status;
+}
+
+function adoptionTemplate(pet) {
+  return element('div', {class: 'row'}, [
+    element('div', {class: 'col-xs-11'}, [
+      element('div', {class: 'collapse', id: 'adoption-form'}, [
+        element('p', {class: ''}, 'Apply to Adopt'),
+        element('div', {class: 'well'}, [
+          element('form', {class: 'form-horizontal'}, [
+            element('div', {class: 'form-group'}, [
+              element('label', {for: 'input-name', class: 'col-sm-2 control-label'}, 'Name'),
+              element('div', {class: 'col-sm-10'}, [
+                element('input', {type: 'text', class: 'form-control', id: 'input-name', placeholder: 'Name', required: 'true'})
+              ])
+            ]),
+            element('div', {class: 'form-group'}, [
+              element('label', {for: 'input-email', class: 'col-sm-2 control-label'}, 'Email'),
+              element('div', {class: 'col-sm-10'}, [
+                element('input', {type: 'email', class: 'form-control', id: 'input-email', placeholder: 'Email', required: 'true'})
+              ]),
+            ]),
+            element('div', {class: 'form-group'}, [
+              element('label', {for: 'input-phone', class: 'col-sm-2 control-label'}, 'Phone'),
+              element('div', {class: 'col-sm-10'}, [
+                element('input', {type: 'tel', class: 'form-control', id: 'input-phone', placeholder: '(555) 555-5555', required: 'true', pattern: '((\\(\\d{3}\\) ?)|(\\d{3}-))?\\d{3}-\\d{4}'})
+              ]),
+            ]),
+            element('div', {class: 'form-group'}, [
+              element('label', {for: 'input-why', class: 'sr-only'}, 'Please describe why you would like to adopt ' + pet.name + '.'),
+              element('div', {class: 'col-sm-12'}, [
+                element('textarea', {class: 'form-control', id: 'input-why', placeholder: 'Please describe why you would like to adopt ' + pet.name + '.', required: 'true'})
+              ]),
+            ]),
+            element('button', {class: 'btn btn-default'}, 'Cancel'),
+            element('button', {class: 'btn btn-primary'}, 'Apply')
+          ])
+        ])
+      ])
+    ])
+  ]);
 }
 
 function petTemplate(shelter, pet) {
@@ -307,6 +347,7 @@ function petTemplate(shelter, pet) {
     element('div', {class: 'col-xs-8'}, [
       element('h3', {}, 'Description'),
       element('p', {}, pet.description),
+      adoptionTemplate(pet),
       element('hr'),
       element('h3', {'data-action': 'show-shelter','data-content': shelter.id }, shelter.name),
       element('pre', {'data-action': 'show-shelter','data-content': shelter.id }, shelter.address.number
