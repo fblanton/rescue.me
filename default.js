@@ -323,11 +323,15 @@ function adoptionTemplate(pet) {
             element('div', {class: 'form-group'}, [
               element('label', {for: 'input-why', class: 'sr-only'}, 'Please describe why you would like to adopt ' + pet.name + '.'),
               element('div', {class: 'col-sm-12'}, [
-                element('textarea', {class: 'form-control', id: 'input-why', placeholder: 'Please describe why you would like to adopt ' + pet.name + '.', required: 'true'})
+                element('textarea', {class: 'form-control', id: 'input-why', placeholder: 'Please describe why you would like to adopt ' + pet.name + '.', required: 'true', rows: 3})
               ]),
             ]),
-            element('button', {class: 'btn btn-default'}, 'Cancel'),
-            element('button', {class: 'btn btn-primary'}, 'Apply')
+            element('div', {class: 'row'}, [
+              element('div', {class: 'btn-group col-xs-12', role: 'group'}, [
+                element('button', {class: 'btn btn-danger col-xs-6', 'data-toggle': 'collapse', 'data-target': '#adoption-form'}, 'Cancel'),
+                element('button', {class: 'btn btn-primary col-xs-6'}, 'Apply')
+              ])
+            ])
           ])
         ])
       ])
@@ -337,14 +341,14 @@ function adoptionTemplate(pet) {
 
 function petTemplate(shelter, pet) {
   return element('div', {class: 'jumbotron'}, [
-    element('div', {class: 'col-xs-4'}, [
+    element('div', {class: 'col-sm-4'}, [
       element('img', {src: imagePlaceholder, class: 'placeholder'}),
       element('h3', {class: 'centered'}, pet.name),
       element('p', {}, pet.breed + ' | ' + pet.gender),
       element('p', {}, 'Adoption Fee: $' + pet.fee),
       element('p', {}, status(pet))
     ]),
-    element('div', {class: 'col-xs-8'}, [
+    element('div', {class: 'col-sm-8'}, [
       element('h3', {}, 'Description'),
       element('p', {}, pet.description),
       adoptionTemplate(pet),
