@@ -7,9 +7,29 @@ var filters = {pet: {breed: ''}};
 //var theMap = createMap('map', 33.6496328, -117.74345);
 var theMap = createMap('map', shelters[0]);
 
-document.getElementById('breed').addEventListener('input', suggest);
-document.body.addEventListener('click', handleClick);
+$('#breed').on('input', suggest);
+$('body').on('click', handleClick);
+$('body').on('submit', handleSubmit);
+$('body').keyup(handleKey);
 //theMap.on('locationfound', function(e) { alert(e.latlng); });
+
+function handleSubmit(submitted) {
+  alert(submitted.target.id);
+  submitted.preventDefault();
+}
+
+function handleKey(key) {
+  // emulate a click on the cancel button if esc is pressed in a form with an id
+  if (key.keyCode === 27) {
+    if (key.target.hasAttributes('form')) {
+      if (key.target.form) {
+        if (key.target.form.hasAttributes('id')) {
+          $('#' + key.target.form.id + ' .cancel').click();
+        }
+      }
+    }
+  }
+}
 
 function handleClick(clicked) {
   var action = '';
@@ -152,7 +172,7 @@ function suggest(breeds) {
   });
 
   // add the matched breeds to theSuggestions DOM element
-  if (!((matched.length === 1) && (matched[0].toLowerCase() === term))) {
+  if (!((matched.length === 1) && (matched[0].toLowerCase() === term.toLowerCase()))) {
     append(theSuggestions, makeList(matched, 10));
   }
 
@@ -301,7 +321,7 @@ function adoptionTemplate(pet) {
       element('div', {class: 'collapse', id: 'adoption-form'}, [
         element('p', {class: ''}, 'Apply to Adopt'),
         element('div', {class: 'well'}, [
-          element('form', {class: 'form-horizontal'}, [
+          element('form', {class: 'form-horizontal', id: 'apply'}, [
             element('div', {class: 'form-group'}, [
               element('label', {for: 'input-name', class: 'col-sm-2 control-label'}, 'Name'),
               element('div', {class: 'col-sm-10'}, [
@@ -328,8 +348,8 @@ function adoptionTemplate(pet) {
             ]),
             element('div', {class: 'row'}, [
               element('div', {class: 'btn-group col-xs-12', role: 'group'}, [
-                element('button', {class: 'btn btn-danger col-xs-6', 'data-toggle': 'collapse', 'data-target': '#adoption-form'}, 'Cancel'),
-                element('button', {class: 'btn btn-primary col-xs-6'}, 'Apply')
+                element('input', {class: 'btn btn-danger col-xs-6 cancel', 'data-toggle': 'collapse', 'data-target': '#adoption-form', type: 'button', value: 'Cancel'}),
+                element('input', {class: 'btn btn-primary col-xs-6', type: 'submit', value: 'Submit'})
               ])
             ])
           ])
