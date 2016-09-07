@@ -244,13 +244,8 @@ function suggest(breeds) {
     matched = returnBreeds(animals, term);
   }
 
-  // sort the matched breeds alphabetically and then by how soon the term appears
   matched.sort();
-  matched.sort(function(a,b) {
-    return (a.toLowerCase().indexOf(term) - b.toLowerCase().indexOf(term));
-  });
 
-  // add the matched breeds to theSuggestions DOM element
   if (!((matched.length === 1) && (matched[0].toLowerCase() === term.toLowerCase()))) {
     append(theSuggestions, makeList(matched, 10));
   }
