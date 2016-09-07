@@ -7,6 +7,7 @@ var filters = {pet: {breed: ''}};
 //var theMap = createMap('map', 33.6496328, -117.74345);
 var theMap = createMap('map', shelters[0]);
 var adoption = {requests: []};
+var favorites = ['4326c2db-0ce7-4fbb-a9dd-361ab44a7c74'];
 
 $('#breed').on('input', suggest);
 $('body').on('click', handleClick);
@@ -102,6 +103,16 @@ function handleClick(clicked) {
       filters = _.extend(filters, {pet: {breed: content}});
       display(shelters);
       break;
+    case 'favorite':
+      favorites.push(content);
+      set(target, {class: 'favorite glyphicon glyphicon-heart favorited', 'data-action': 'unfavorite'});
+      target.addEventListener('mouseout', blur);
+      break;
+    case 'unfavorite':
+      favorites = _.without(favorites, content);
+      set(target, {class: 'favorite glyphicon glyphicon-heart', 'data-action': 'favorite'});
+      target.addEventListener('mouseout', blur);
+      break;
     case 'show-hero':
       swap('headers', 'hero');
       swap('views', 'home');
@@ -114,12 +125,22 @@ function handleClick(clicked) {
       break;
     case 'hide-modal':
       swap('modals');
-      set('modal-close', 'hidden', true);
+      set($('#modal-close')[0], {class: 'hidden'});
       break;
     case 'adopt':
       swap('modals', 'adopt', true)
       break
   }
+}
+
+function blur(e) {
+  e.target.blur();
+  e.target.removeEventListener('mouseout', blur)
+}
+
+function favorite(id, target, fav) {
+
+  return id;
 }
 
 function swap(area, view) {
@@ -138,14 +159,10 @@ function swap(area, view) {
   }
 }
 
-function set(item, style, on) {
-  var theItem = document.getElementById(item);
-
-  if (on) {
-    theItem.classList.add(style);
-  } else {
-    theItem.classList.remove(style);
-  }
+function set(theItem, attributes) {
+  _.each(attributes, function(value, key) {
+    this.setAttribute(key, value);
+  }, theItem);
 }
 
 function createMap(id, shelter) {
@@ -302,7 +319,7 @@ function modal(data, view, keep) {
       break;
   }
 
-  set('modal-close', 'hidden', false);
+  set($('#modal-close')[0], {class: ''});
 }
 
 function element(tag, attributes, contents) {
@@ -339,7 +356,8 @@ function createCard(shelter, pet) {
     { class: 'entry',
     'data-action': 'show-animal',
     'data-content': JSON.stringify({shelterID: shelter.id, petID: pet.id}) },
-    [ element('img', {src: imagePlaceholder, class: 'placeholder'}),
+    [ element('span', {class: 'favorite glyphicon glyphicon-heart', tabindex: 0, 'aria-hidden': true, 'data-action': 'favorite', 'data-content': pet.id}),
+      element('img', {src: imagePlaceholder, class: 'placeholder'}),
       element('h5', {class: 'centered'}, pet.name),
       element('hr'),
       element('p', {}, pet.breed),
