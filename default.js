@@ -4,7 +4,6 @@ var imagePlaceholder = 'data:image\/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlb
 //begin gloabl variables
 var shelters = JSON.parse(data);
 var filters = {pet: {breed: ''}};
-//var theMap = createMap('map', 33.6496328, -117.74345);
 var theMap = createMap('map', shelters[0]);
 var adoption = {requests: []};
 var favorites = [];
@@ -13,7 +12,6 @@ $('#breed').on('input', suggest);
 $('body').on('click', handleClick);
 $('body').on('submit', handleSubmit);
 $('body').keyup(handleKey);
-//theMap.on('locationfound', function(e) { alert(e.latlng); });
 
 function handleSubmit(submitted) {
   var theForm = submitted.target;
@@ -31,37 +29,6 @@ function handleSubmit(submitted) {
       save('adoption', JSON.stringify(adoption));
       break;
   }
-}
-
-function save(key, value) {
-  localStorage.setItem(key, value);
-}
-
-function load(key) {
-  _.extend(eval(key), JSON.parse(localStorage.getItem(key)));
-  return localStorage.getItem(key);
-}
-
-function success(theForm, message) {
-  var theParent = theForm.parentNode;
-
-  clear(theParent);
-
-  theParent.setAttribute('style', 'background-color: rgba(0,255,0,.1);');
-  theParent.appendChild(
-    element('h2', {class: 'success centered', style: 'color: darkgreen;'}, message)
-  );
-}
-
-function intake(theForm) {
-  var inputs = $('#' + theForm.id + ' .extract').toArray();
-
-  var form = _.object(
-    _.pluck(inputs, 'name'),
-    _.pluck(inputs, 'value').map(function(value) { return _.escape(value)})
-  );
-
-  return form;
 }
 
 function handleKey(key) {
@@ -129,6 +96,37 @@ function handleClick(clicked) {
   }
 }
 
+function save(key, value) {
+  localStorage.setItem(key, value);
+}
+
+function load(key) {
+  _.extend(eval(key), JSON.parse(localStorage.getItem(key)));
+  return localStorage.getItem(key);
+}
+
+function success(theForm, message) {
+  var theParent = theForm.parentNode;
+
+  clear(theParent);
+
+  theParent.setAttribute('style', 'background-color: rgba(0,255,0,.1);');
+  theParent.appendChild(
+    element('h2', {class: 'success centered', style: 'color: darkgreen;'}, message)
+  );
+}
+
+function intake(theForm) {
+  var inputs = $('#' + theForm.id + ' .extract').toArray();
+
+  var form = _.object(
+    _.pluck(inputs, 'name'),
+    _.pluck(inputs, 'value').map(function(value) { return _.escape(value)})
+  );
+
+  return form;
+}
+
 function blur(e) {
   e.target.blur();
   e.target.removeEventListener('mouseout', blur)
@@ -174,8 +172,14 @@ function set(theItem, attributes) {
 
 function createMap(id, shelter) {
   var lat = shelter.latitude,
-      long = shelter.longitude,
-      theMap = L.map(id).setView([lat, long], 15);
+      long = shelter.longitude;
+
+  if (!(lat && long)) {
+    lat = 33.6496328;
+    long = -117.74345;
+  }
+
+  var  theMap = L.map(id).setView([lat, long], 15);
 
   L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
     attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
@@ -262,7 +266,7 @@ function display(shelters, where) {
   clear(theResults);
   theResults.appendChild(element('div', {id: 'number-displayed'}, _.size(pets)));
   append(theResults, _.map(pets, function(pet) {
-    return (createCard(getShelter({petID: pet.id}), pet));
+    return (cardTemplate(getShelter({petID: pet.id}), pet));
   }));
 }
 
@@ -352,7 +356,26 @@ function append(element, children) {
   return element;
 }
 
-function createCard(shelter, pet) {
+function pets(shelterID) {
+  var shelter = getShelter({shelterID: shelterID});
+  return _.map(shelter.pets, function(pet) {
+     return cardTemplate(this, pet);
+   }, shelter);
+}
+
+function status(pet) {
+  var status;
+
+  if (pet.status === 'Available') {
+    status = [element('button', {class: 'btn btn-primary', type: 'button', 'data-toggle': 'collapse', 'data-target': '#adoption-form', 'aria-expanded': 'false', 'aria-controls': 'adoption-form'}, 'ADOPT NOW')];
+  } else {
+    status = pet.status;
+  }
+
+  return status;
+}
+
+function cardTemplate(shelter, pet) {
   return element('div', {class: 'col-md-4'},
   [ element('div',
     { class: 'entry',
@@ -369,25 +392,6 @@ function createCard(shelter, pet) {
       element('p', {}, shelter.address.city + ' ' + shelter.address.state)
     ])
   ]);
-}
-
-function pets(shelterID) {
-  var shelter = getShelter({shelterID: shelterID});
-  return _.map(shelter.pets, function(pet) {
-     return createCard(this, pet);
-   }, shelter);
-}
-
-function status(pet) {
-  var status;
-
-  if (pet.status === 'Available') {
-    status = [element('button', {class: 'btn btn-primary', type: 'button', 'data-toggle': 'collapse', 'data-target': '#adoption-form', 'aria-expanded': 'false', 'aria-controls': 'adoption-form'}, 'ADOPT NOW')];
-  } else {
-    status = pet.status;
-  }
-
-  return status;
 }
 
 function heartTemplate(pet, favorites) {
