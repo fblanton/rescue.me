@@ -120,8 +120,8 @@ function handleClick(clicked) {
       modal(content, 'pet');
       break;
     case 'hide-modal':
-      swap('modals');
       set($('#modal-close')[0], {class: 'hidden'});
+      display(shelters);
       break;
     case 'adopt':
       swap('modals', 'adopt', true)
@@ -397,12 +397,10 @@ function status(pet) {
 
 function heartTemplate(pet, favorites) {
   if (_.contains(favorites, pet.id)) {
-    var theHeart = element('span', {class: 'favorite glyphicon glyphicon-heart favorited', tabindex: 0, 'aria-hidden': true, 'data-action': 'unfavorite', 'data-content': pet.id});
+    return element('span', {class: 'favorite glyphicon glyphicon-heart favorited', tabindex: 0, 'aria-hidden': true, 'data-action': 'unfavorite', 'data-content': pet.id});
   } else {
-    var theHeart = element('span', {class: 'favorite glyphicon glyphicon-heart', tabindex: 0, 'aria-hidden': true, 'data-action': 'favorite', 'data-content': pet.id});
+    return element('span', {class: 'favorite glyphicon glyphicon-heart', tabindex: 0, 'aria-hidden': true, 'data-action': 'favorite', 'data-content': pet.id});
   }
-
-  return theHeart;
 }
 
 function adoptionTemplate(pet) {
@@ -453,6 +451,7 @@ function adoptionTemplate(pet) {
 function petTemplate(shelter, pet) {
   return element('div', {class: 'jumbotron'}, [
     element('div', {class: 'col-sm-4'}, [
+      heartTemplate(pet, favorites),
       element('img', {src: imagePlaceholder, class: 'placeholder'}),
       element('h3', {class: 'centered'}, pet.name),
       element('p', {}, pet.breed + ' | ' + pet.gender),
