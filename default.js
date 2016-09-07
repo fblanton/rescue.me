@@ -25,13 +25,23 @@ function handleSubmit(submitted) {
 
   switch (theForm.id) {
     case 'apply':
-      inputApplication(theForm, adoption);
+      adoption.requests.push(intake(theForm));
+      $('#' + theForm.id + ' .cancel').click();
+      empty(theForm);
       break;
   }
 }
 
-function inputApplication(theForm, adoption) {
-  // iterate through $:inputs and attach them to adoption.requests as key: value;
+function intake(theForm) {
+  var inputs = $('#' + theForm.id + ' .extract');
+
+  var form = _.object(
+    _.pluck(inputs.toArray(), 'name'),
+    _.pluck(inputs.toArray(), 'value')
+    .map(function(string) { return _.escape(string) })
+  );
+
+  return form;
 }
 
 function handleKey(key) {
@@ -149,6 +159,16 @@ function clear(element) {
   while(element.firstChild) {
     element.removeChild(element.firstChild);
   }
+}
+
+function empty(theForm) {
+  var inputs = $('#' + theForm.id + ' .extract');
+
+  inputs.each(function(index, element) {
+    if (element.type !== 'hidden') {
+      element.value = '';
+    }
+  });
 }
 
 function returnBreeds(animals, term) {
@@ -337,29 +357,30 @@ function adoptionTemplate(pet) {
       element('div', {class: 'collapse', id: 'adoption-form'}, [
         element('p', {class: ''}, 'Apply to Adopt'),
         element('div', {class: 'well'}, [
-          element('form', {class: 'form-horizontal', id: 'apply', 'data-content': pet.id}, [
+          element('form', {class: 'form-horizontal', id: 'apply'}, [
+            element('input', {type: 'hidden', class: 'extract', name: 'pet', value:pet.id}),
             element('div', {class: 'form-group'}, [
               element('label', {for: 'input-name', class: 'col-sm-2 control-label'}, 'Name'),
               element('div', {class: 'col-sm-10'}, [
-                element('input', {type: 'text', class: 'form-control', id: 'input-name', placeholder: 'Name', required: 'true'})
+                element('input', {type: 'text', name: 'name', class: 'form-control extract', id: 'input-name', placeholder: 'Name', required: 'true'})
               ])
             ]),
             element('div', {class: 'form-group'}, [
               element('label', {for: 'input-email', class: 'col-sm-2 control-label'}, 'Email'),
               element('div', {class: 'col-sm-10'}, [
-                element('input', {type: 'email', class: 'form-control', id: 'input-email', placeholder: 'Email', required: 'true'})
+                element('input', {type: 'email', name: 'email', class: 'form-control extract', id: 'input-email', placeholder: 'Email', required: 'true'})
               ]),
             ]),
             element('div', {class: 'form-group'}, [
               element('label', {for: 'input-phone', class: 'col-sm-2 control-label'}, 'Phone'),
               element('div', {class: 'col-sm-10'}, [
-                element('input', {type: 'tel', class: 'form-control', id: 'input-phone', placeholder: '(555) 555-5555', required: 'true', pattern: '((\\(\\d{3}\\) ?)|(\\d{3}-))?\\d{3}-\\d{4}'})
+                element('input', {type: 'tel', name: 'telephone', class: 'form-control extract', id: 'input-phone', placeholder: '(555) 555-5555', required: 'true', pattern: '((\\(\\d{3}\\) ?)|(\\d{3}-))?\\d{3}-\\d{4}'})
               ]),
             ]),
             element('div', {class: 'form-group'}, [
               element('label', {for: 'input-why', class: 'sr-only'}, 'Please describe why you would like to adopt ' + pet.name + '.'),
               element('div', {class: 'col-sm-12'}, [
-                element('textarea', {class: 'form-control', id: 'input-why', placeholder: 'Please describe why you would like to adopt ' + pet.name + '.', required: 'true', rows: 3})
+                element('textarea', {name: 'why', class: 'form-control extract', id: 'input-why', placeholder: 'Please describe why you would like to adopt ' + pet.name + '.', required: 'true', rows: 3})
               ]),
             ]),
             element('div', {class: 'row'}, [
