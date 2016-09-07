@@ -26,19 +26,38 @@ function handleSubmit(submitted) {
   switch (theForm.id) {
     case 'apply':
       adoption.requests.push(intake(theForm));
-      $('#' + theForm.id + ' .cancel').click();
-      empty(theForm);
+      success(theForm, 'Thank you! We will review your request and get back to you shortly via email.');
+      save('adoption', JSON.stringify(adoption));
       break;
   }
 }
 
+function save(key, value) {
+  localStorage.setItem(key, value);
+}
+
+function load(key) {
+  _.extend(eval(key), JSON.parse(localStorage.getItem(key)));
+  return localStorage.getItem(key);
+}
+
+function success(theForm, message) {
+  var theParent = theForm.parentNode;
+
+  clear(theParent);
+
+  theParent.setAttribute('style', 'background-color: rgba(0,255,0,.1);');
+  theParent.appendChild(
+    element('h2', {class: 'success centered', style: 'color: darkgreen;'}, message)
+  );
+}
+
 function intake(theForm) {
-  var inputs = $('#' + theForm.id + ' .extract');
+  var inputs = $('#' + theForm.id + ' .extract').toArray();
 
   var form = _.object(
-    _.pluck(inputs.toArray(), 'name'),
-    _.pluck(inputs.toArray(), 'value')
-    .map(function(string) { return _.escape(string) })
+    _.pluck(inputs, 'name'),
+    _.pluck(inputs, 'value').map(function(value) { return _.escape(value)})
   );
 
   return form;
@@ -446,3 +465,4 @@ function shelterTemplate(shelter) {
 
 display(shelters);
 theMap.locate();
+load('adoption');
