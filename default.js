@@ -7,7 +7,7 @@ var filters = {pet: {breed: ''}};
 //var theMap = createMap('map', 33.6496328, -117.74345);
 var theMap = createMap('map', shelters[0]);
 var adoption = {requests: []};
-var favorites = ['4326c2db-0ce7-4fbb-a9dd-361ab44a7c74'];
+var favorites = [];
 
 $('#breed').on('input', suggest);
 $('body').on('click', handleClick);
@@ -104,14 +104,10 @@ function handleClick(clicked) {
       display(shelters);
       break;
     case 'favorite':
-      favorites.push(content);
-      set(target, {class: 'favorite glyphicon glyphicon-heart favorited', 'data-action': 'unfavorite'});
-      target.addEventListener('mouseout', blur);
+      favorite(target, true, favorites);
       break;
     case 'unfavorite':
-      favorites = _.without(favorites, content);
-      set(target, {class: 'favorite glyphicon glyphicon-heart', 'data-action': 'favorite'});
-      target.addEventListener('mouseout', blur);
+      favorite(target, false, favorites);
       break;
     case 'show-hero':
       swap('headers', 'hero');
@@ -138,9 +134,20 @@ function blur(e) {
   e.target.removeEventListener('mouseout', blur)
 }
 
-function favorite(id, target, fav) {
+function favorite(target, fave, _favorites) {
+  var id = target.getAttribute('data-content');
 
-  return id;
+  if (fave) {
+    _favorites.push(id);
+    set(target, {class: 'favorite glyphicon glyphicon-heart favorited', 'data-action': 'unfavorite'});
+    target.addEventListener('mouseout', blur);
+  } else {
+    favorites = _.without(_favorites, id);
+    set(target, {class: 'favorite glyphicon glyphicon-heart', 'data-action': 'favorite'});
+    target.addEventListener('mouseout', blur);
+  }
+
+  save('favorites', JSON.stringify(favorites));
 }
 
 function swap(area, view) {
@@ -356,7 +363,7 @@ function createCard(shelter, pet) {
     { class: 'entry',
     'data-action': 'show-animal',
     'data-content': JSON.stringify({shelterID: shelter.id, petID: pet.id}) },
-    [ element('span', {class: 'favorite glyphicon glyphicon-heart', tabindex: 0, 'aria-hidden': true, 'data-action': 'favorite', 'data-content': pet.id}),
+    [ heartTemplate(pet, favorites),
       element('img', {src: imagePlaceholder, class: 'placeholder'}),
       element('h5', {class: 'centered'}, pet.name),
       element('hr'),
@@ -386,6 +393,16 @@ function status(pet) {
   }
 
   return status;
+}
+
+function heartTemplate(pet, favorites) {
+  if (_.contains(favorites, pet.id)) {
+    var theHeart = element('span', {class: 'favorite glyphicon glyphicon-heart favorited', tabindex: 0, 'aria-hidden': true, 'data-action': 'unfavorite', 'data-content': pet.id});
+  } else {
+    var theHeart = element('span', {class: 'favorite glyphicon glyphicon-heart', tabindex: 0, 'aria-hidden': true, 'data-action': 'favorite', 'data-content': pet.id});
+  }
+
+  return theHeart;
 }
 
 function adoptionTemplate(pet) {
@@ -484,3 +501,4 @@ function shelterTemplate(shelter) {
 display(shelters);
 theMap.locate();
 load('adoption');
+load('favorites');
