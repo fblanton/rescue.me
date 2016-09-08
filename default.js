@@ -65,7 +65,7 @@ function handleClick(clicked) {
       complete('breed', content);
       break;
     case 'filter-breed':
-      swap('headers', 'primary');
+      swap('heros');
       swap('views', 'results');
       filters = _.extend(filters, {pet: {breed: content}});
       display(shelters);
@@ -77,10 +77,12 @@ function handleClick(clicked) {
       favorite(target, false, favorites);
       break;
     case 'all-favorites':
-      display(shelters, 'results', _.extend({favorites: favorites}, filters));
+      swap('heros');
+      swap('views', 'results');
+      display(shelters, 'results', {favorites: favorites});
       break;
     case 'show-hero':
-      swap('headers', 'hero');
+      swap('heros', 'hero');
       swap('views', 'home');
       break;
     case 'show-shelter':

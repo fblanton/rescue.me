@@ -72,6 +72,10 @@ textarea {
   z-index: -1;
 }
 
+.navbar-default {
+  background-color: rgba(248, 248, 248, 0.8);
+}
+
 #hero {
   position: relative;
   overflow: hidden;
@@ -79,11 +83,15 @@ textarea {
   height: 100vh;
 }
 
+#views {
+  margin-top: 65px;
+}
+
 #pets .col-md-4 {
   width: 100%;
 }
 
-#hero.active + #primary + #breed-filter {
+#hero.active ~ .container-fluid #breed-filter {
   position: absolute;
   top: 75vh;
   left: 10vw;
