@@ -76,6 +76,9 @@ function handleClick(clicked) {
     case 'unfavorite':
       favorite(target, false, favorites);
       break;
+    case 'all-favorites':
+      display(shelters, 'results', _.extend({favorites: favorites}, filters));
+      break;
     case 'show-hero':
       swap('headers', 'hero');
       swap('views', 'home');
@@ -272,6 +275,9 @@ function display(shelters, where, _filters) {
 }
 
 function filter(array, filters) {
+  var filteredShelters,
+      filteredPets;
+
   if (filters.shelter) {
     filteredShelters = _.filter(shelters, filters.shelter);
   } else {
@@ -290,7 +296,9 @@ function filter(array, filters) {
   }
 
   if (filters.favorites) {
-    filteredPets;
+    filteredPets = _.chain(favorites)
+                    .map(function (id) { return _.where(this, {id: id}) }, filteredPets)
+                    .flatten().value();
   }
 
   return filteredPets;
