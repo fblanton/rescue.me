@@ -257,11 +257,12 @@ function suggest(breeds) {
   document.getElementById('filter-breed').setAttribute('data-content', term);
 }
 
-function display(shelters, where) {
+function display(shelters, where, _filters) {
   if (!where) { where = 'results'; }
+  if (!_filters) { _filters = filters; }
 
   var theResults = document.getElementById(where);
-  var pets = filter(shelters, filters);
+  var pets = filter(shelters, _filters);
 
   clear(theResults);
   theResults.appendChild(element('div', {id: 'number-displayed'}, _.size(pets)));
@@ -286,6 +287,10 @@ function filter(array, filters) {
     filteredPets = _.chain(filteredShelters)
                     .pluck('pets')
                     .flatten().value();
+  }
+
+  if (filters.favorites) {
+    filteredPets;
   }
 
   return filteredPets;
