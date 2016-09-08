@@ -91,16 +91,19 @@ textarea {
   width: 100%;
 }
 
-#hero.active ~ .container-fluid #breed-filter {
+.tagline {
   position: absolute;
   top: 75vh;
   left: 10vw;
   width: 70vw;
   transform: translateY(-50%);
+  color: white;
+  font-size: 3.2em;
 }
 
-#hero.active + #primary + #breed-filter h1 {
-  color: white;
+.tagline p:last-child {
+  font-size: 1.3em;
+  padding-left: 1em;
 }
 
 #breed-suggestions {
