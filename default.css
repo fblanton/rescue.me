@@ -42,14 +42,20 @@ textarea {
   margin-bottom: 5px;
 }
 
-.entry .image {
+.image {
   width: 100%;
-  left: 0px;
-  position: absolute;
   top: 0;
+  left: 0;
   height: 250px;
   background-size: cover;
   background-position: center;
+  border-radius: 6px;
+  margin-bottom: 5px;
+}
+
+.entry .image {
+  position: absolute;
+  border-radius: 0;
 }
 
 .favorite {

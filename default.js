@@ -474,7 +474,7 @@ function petTemplate(shelter, pet) {
   return element('div', {class: 'jumbotron'}, [
     element('div', {class: 'col-sm-4'}, [
       heartTemplate(pet, favorites),
-      element('img', {src: imagePlaceholder, class: 'placeholder'}),
+      element('div', {style: 'background-image: url(' + ('\'imgs/' + pet.type.toLowerCase() + 's/' + pet.image + '\')'), class: 'image'}),
       element('h3', {class: 'centered'}, pet.name),
       element('p', {}, pet.breed + ' | ' + pet.gender),
       element('p', {}, 'Adoption Fee: $' + pet.fee),
