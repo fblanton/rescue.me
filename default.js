@@ -93,6 +93,7 @@ function handleClick(clicked) {
       break;
     case 'hide-modal':
       set($('#modal-close')[0], {class: 'hidden'});
+      $('body').removeClass('noscroll');
       break;
     case 'adopt':
       swap('modals', 'adopt', true)
@@ -348,6 +349,7 @@ function modal(data, view, keep) {
       break;
   }
 
+  $('body').addClass('noscroll');
   set($('#modal-close')[0], {class: ''});
 }
 

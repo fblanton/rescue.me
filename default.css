@@ -58,6 +58,10 @@ textarea {
   border-radius: 0;
 }
 
+.noscroll {
+  overflow: hidden;
+}
+
 .favorite {
   position: absolute;
   right: 30px;
