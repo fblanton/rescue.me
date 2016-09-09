@@ -14,7 +14,7 @@ $('body').on('submit', handleSubmit);
 $('body').keyup(handleKey);
 
 function handleSubmit(submitted) {
-  var theForm = submitted.target;
+  theForm = submitted.target;
   submitted.preventDefault();
 
   if (!theForm.checkValidity()) {
@@ -28,19 +28,61 @@ function handleSubmit(submitted) {
       success(theForm, 'Thank you! We will review your request and get back to you shortly via email.');
       save('adoption', JSON.stringify(adoption));
       break;
+    case 'breed-filter':
+      var theSibling = theForm.querySelector(':focus').nextElementSibling;
+      if (theSibling.nodeName === 'UL') {
+        var active = theSibling.getElementsByClassName('highlight')[0];
+        if (active) {
+          complete('breed', active.textContent);
+          theForm.querySelector(':focus').blur();
+        }
+      }
+      break;
   }
 }
 
 function handleKey(key) {
+  var target = key.target;
   // emulate a click on the cancel button if esc is pressed in a form with an id
-  if (key.keyCode === 27) {
-    if (key.target.hasAttributes('form')) {
-      if (key.target.form) {
-        if (key.target.form.hasAttributes('id')) {
-          $('#' + key.target.form.id + ' .cancel').click();
+  switch (key.keyCode) {
+    case 27: // esc key
+      if (target.hasAttributes('form')) {
+        if (target.form) {
+          if (target.form.hasAttributes('id')) {
+            $('#' + target.form.id + ' .cancel').click();
+          }
         }
       }
-    }
+      break;
+    case 38: // up arrow
+      var theSibling = target.nextElementSibling;
+      if (theSibling.nodeName === 'UL') {
+        if (target.nextElementSibling.hasChildNodes()) {
+          var theNext = next(target.nextElementSibling, 'up');
+          theNext.classList.add('highlight');
+          document.getElementById('filter-breed').setAttribute('data-content', theNext.textContent);
+        }
+      }
+      break;
+    case 40: // down arrow
+      var theSibling = target.nextElementSibling;
+      if (theSibling.nodeName === 'UL') {
+        if (target.nextElementSibling.hasChildNodes()) {
+          var theNext = next(target.nextElementSibling, 'down');
+          theNext.classList.add('highlight');
+          document.getElementById('filter-breed').setAttribute('data-content', theNext.textContent);
+        }
+      }
+      break;
+    case 13: // enter key
+      // var theSibling = target.nextElementSibling;
+      // if (theSibling.nodeName === 'UL') {
+      //   var active = theSibling.getElementsByClassName('highlight')[0];
+      //   if (active) { target.value = active.textContent; }
+      // }
+      break;
+    default:
+      //alert (key.keyCode);
   }
 }
 
@@ -156,6 +198,27 @@ function favorite(target, fave, _favorites) {
   }
 
   save('favorites', JSON.stringify(favorites));
+}
+
+function next(list, direction) {
+  var active = list.getElementsByClassName('highlight')[0];
+  theChildren = list.childNodes;
+
+
+  if (!active) {
+    return direction === 'down' ? list.firstElementChild
+                                : list.lastElementChild;
+  } else {
+    active.classList.remove('highlight');
+
+    if (direction === 'down') {
+      return active.nextElementSibling ? active.nextElementSibling
+                                      : list.firstElementChild;
+    } else {
+      return active.previousElementSibling ? active.previousElementSibling
+                                      : list.lastElementChild;
+    }
+  }
 }
 
 function swap(area, view) {

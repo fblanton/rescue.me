@@ -83,6 +83,11 @@ textarea {
   color: rgb(226,38,77);
 }
 
+li.list-group-item.highlight {
+  background-color: rgba(55,123,181,0.9);
+  color: white;
+}
+
 .voffset { margin-top: 1em; }
 .voffset2 { margin-top: 2em; }
 .voffset3 { margin-top: 3em; }
@@ -151,7 +156,7 @@ textarea {
   border-radius: 4px;
 }
 
-#breed-suggestions > li.list-group-item {
+#breed-suggestions > li:not(.highlight).list-group-item {
   background-color: rgba(250,250,250,.9);
 }
 
