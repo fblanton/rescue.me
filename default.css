@@ -1,6 +1,7 @@
 body {
   background-color: rgb(245,245,241);
   font-family: "Open Sans", Helvetica, Arial, sans-serif;
+  cursor: pointer;
 }
 
 video {
