@@ -78,8 +78,8 @@ function handleClick(clicked) {
       break;
     case 'all-favorites':
       swap('heros');
-      swap('views', 'results');
-      display(shelters, 'results', {favorites: favorites});
+      swap('views', 'favorites');
+      display(shelters, 'favorites', {favorites: favorites});
       break;
     case 'show-hero':
       swap('heros', 'hero');
