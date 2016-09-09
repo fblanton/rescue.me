@@ -93,7 +93,6 @@ function handleClick(clicked) {
       break;
     case 'hide-modal':
       set($('#modal-close')[0], {class: 'hidden'});
-      display(shelters);
       break;
     case 'adopt':
       swap('modals', 'adopt', true)
@@ -139,14 +138,19 @@ function blur(e) {
 
 function favorite(target, fave, _favorites) {
   var id = target.getAttribute('data-content');
+  var theSpans = $('.favorite[data-content="' + id + '"]');
 
   if (fave) {
     _favorites.push(id);
-    set(target, {class: 'favorite glyphicon glyphicon-heart favorited', 'data-action': 'unfavorite'});
+    theSpans.each(function(span) {
+      set(this, {class: 'favorite glyphicon glyphicon-heart favorited', 'data-action': 'unfavorite'});
+    });
     target.addEventListener('mouseout', blur);
   } else {
     favorites = _.without(_favorites, id);
-    set(target, {class: 'favorite glyphicon glyphicon-heart', 'data-action': 'favorite'});
+    theSpans.each(function(span) {
+      set(this, {class: 'favorite glyphicon glyphicon-heart', 'data-action': 'favorite'});
+    });
     target.addEventListener('mouseout', blur);
   }
 
