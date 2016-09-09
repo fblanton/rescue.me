@@ -399,7 +399,7 @@ function status(pet) {
 }
 
 function cardTemplate(shelter, pet) {
-  return element('div', {class: 'col-md-4'},
+  return element('div', {class: 'col-sm-4'},
   [ element('div',
     { class: 'entry',
     'data-action': 'show-animal',
@@ -481,7 +481,7 @@ function petTemplate(shelter, pet) {
       element('p', {}, status(pet))
     ]),
     element('div', {class: 'col-sm-8'}, [
-      element('h3', {}, 'Description'),
+      element('h3', {class: 'centered'}, 'Description'),
       element('p', {}, pet.description),
       adoptionTemplate(pet),
       element('hr'),
@@ -500,7 +500,7 @@ function petTemplate(shelter, pet) {
 function shelterTemplate(shelter) {
   return element('div', {class: 'jumbotron'}, [
     element('div', {id: 'map'}),
-    element('div', {class: 'col-xs-4'}, [
+    element('div', {class: 'col-sm-4'}, [
       element('h3', {class: 'centered', 'data-action': 'show-shelter','data-content': shelter.id }, shelter.name),
       element('pre', {class: 'centered', 'data-action': 'show-shelter','data-content': shelter.id }, shelter.address.number
         + ' '  + shelter.address.street
@@ -509,9 +509,11 @@ function shelterTemplate(shelter) {
         + ' '  + shelter.address.zip
         + '\n' + shelter.phone)
     ]),
-    element('div', {class: 'col-xs-8'}, [
-      element('h3', {}, 'Description'),
-      element('p', {}, shelter.description),
+    element('div', {class: 'col-sm-8'}, [
+      element('h3', {class: 'centered'}, 'Description'),
+      element('p', {}, shelter.description)
+    ]),
+    element('div', {class: 'col-xs-12'}, [
       element('hr'),
       element('h3', {}, 'All Pets'),
       element('div', {id: 'pets'}, pets(shelter.id))
