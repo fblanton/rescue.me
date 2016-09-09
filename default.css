@@ -51,6 +51,12 @@ textarea {
   background-position: center;
 }
 
+.body * {
+  cursor: pointer;
+}
+
+.modal
+
 .favorite {
   position: absolute;
   right: 30px;
