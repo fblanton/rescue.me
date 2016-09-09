@@ -397,7 +397,7 @@ function cardTemplate(shelter, pet) {
     'data-action': 'show-animal',
     'data-content': JSON.stringify({shelterID: shelter.id, petID: pet.id}) },
     [ heartTemplate(pet, favorites),
-      element('img', {src: imagePlaceholder, class: 'placeholder'}),
+      element('div', {style: 'background-image: url(' + ('\'imgs/' + pet.type.toLowerCase() + 's/' + pet.image + '\')'), class: 'image'}),
       element('h5', {class: 'centered'}, pet.name),
       element('hr'),
       element('p', {}, pet.breed),
