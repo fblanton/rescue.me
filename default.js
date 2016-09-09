@@ -274,10 +274,14 @@ function display(shelters, where, _filters) {
   var pets = filter(shelters, _filters);
 
   clear(theResults);
-  theResults.appendChild(element('div', {id: 'number-displayed'}, _.size(pets)));
-  append(theResults, _.map(pets, function(pet) {
-    return (cardTemplate(getShelter({petID: pet.id}), pet));
-  }));
+  theResults.appendChild(
+    element('div', {id: 'number-displayed', class: 'centered'}, 'Displaying ' + _.size(pets) + (_.size(pets) === 1 ? ' pet' : ' pets'))
+  );
+  append(theResults, _.map(pets,
+    function(pet) {
+      return (cardTemplate(getShelter({petID: pet.id}), pet));
+    })
+  );
 }
 
 function filter(array, filters) {
