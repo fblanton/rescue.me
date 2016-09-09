@@ -51,12 +51,6 @@ textarea {
   background-position: center;
 }
 
-body {
-  cursor: pointer;
-}
-
-.modal
-
 .favorite {
   position: absolute;
   right: 30px;
@@ -133,6 +127,10 @@ body {
   font-family: 'Open Sans', sans-serif;
   font-size: 1.3em;
   font-weight: 300;
+}
+
+.clickable {
+  cursor: pointer;
 }
 
 #breed-suggestions {
