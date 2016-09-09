@@ -129,6 +129,10 @@ textarea {
   font-weight: 300;
 }
 
+.clickable {
+  cursor: pointer;
+}
+
 #breed-suggestions {
   position: absolute;
   border-width: 1px;

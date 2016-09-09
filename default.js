@@ -398,7 +398,7 @@ function cardTemplate(shelter, pet) {
     'data-content': JSON.stringify({shelterID: shelter.id, petID: pet.id}) },
     [ heartTemplate(pet, favorites),
       element('div', {style: 'background-image: url(' + ('\'imgs/' + pet.type.toLowerCase() + 's/' + pet.image + '\')'), class: 'image'}),
-      element('h5', {class: 'centered'}, pet.name),
+      element('h3', {class: 'centered'}, pet.name),
       element('hr'),
       element('p', {}, pet.breed),
       element('p', {}, parseInt(pet.age/12) + ' yrs ' + parseInt(pet.age%12) + ' mos | ' + pet.gender),
