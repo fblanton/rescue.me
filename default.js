@@ -11,10 +11,10 @@ var favorites = [];
 $('#breed').on('input', suggest);
 $('body').on('click', handleClick);
 $('body').on('submit', handleSubmit);
-$('body').keyup(handleKey);
+$('body').keydown(handleKey);
 
 function handleSubmit(submitted) {
-  theForm = submitted.target;
+  var theForm = submitted.target;
   submitted.preventDefault();
 
   if (!theForm.checkValidity()) {
@@ -29,14 +29,7 @@ function handleSubmit(submitted) {
       save('adoption', JSON.stringify(adoption));
       break;
     case 'breed-filter':
-      var theSibling = theForm.querySelector(':focus').nextElementSibling;
-      if (theSibling.nodeName === 'UL') {
-        var active = theSibling.getElementsByClassName('highlight')[0];
-        if (active) {
-          complete('breed', active.textContent);
-          theForm.querySelector(':focus').blur();
-        }
-      }
+      search(theForm);
       break;
   }
 }
@@ -53,10 +46,14 @@ function handleKey(key) {
           }
         }
       }
+      if (key.target.id === 'breed') {
+        clear($('#breed-suggestions')[0]);
+        key.target.value = '';
+      }
       break;
     case 38: // up arrow
       var theSibling = target.nextElementSibling;
-      if (theSibling.nodeName === 'UL') {
+      if (theSibling.nodeName && theSibling.nodeName === 'UL') {
         if (target.nextElementSibling.hasChildNodes()) {
           var theNext = next(target.nextElementSibling, 'up');
           theNext.classList.add('highlight');
@@ -64,9 +61,18 @@ function handleKey(key) {
         }
       }
       break;
+    case 9: // tab key
+      if (key.target.id === 'breed') {
+        var theSibling = target.nextElementSibling;
+        if (theSibling.nodeName === 'UL') {
+          if (target.nextElementSibling.hasChildNodes()) {
+            key.preventDefault();
+          }
+        }
+      }
     case 40: // down arrow
       var theSibling = target.nextElementSibling;
-      if (theSibling.nodeName === 'UL') {
+      if (theSibling.nodeName && theSibling.nodeName === 'UL') {
         if (target.nextElementSibling.hasChildNodes()) {
           var theNext = next(target.nextElementSibling, 'down');
           theNext.classList.add('highlight');
@@ -105,12 +111,12 @@ function handleClick(clicked) {
   switch (action) {
     case 'complete-breed':
       complete('breed', content);
-      break;
-    case 'filter-breed':
       swap('heros');
       swap('views', 'results');
       filters = _.extend(filters, {pet: {breed: content}});
       display(shelters);
+      break;
+    case 'filter-breed':
       break;
     case 'favorite':
       favorite(target, true, favorites);
@@ -140,6 +146,26 @@ function handleClick(clicked) {
     case 'adopt':
       swap('modals', 'adopt', true)
       break
+  }
+}
+
+function search(theForm) {
+  var theInput = theForm.querySelector('#breed');
+
+  if (theInput.value !== '') {
+    var theSibling = theInput.nextElementSibling;
+    if (theSibling.nodeName === 'UL') {
+      var active = theSibling.getElementsByClassName('highlight')[0];
+      if (active) {
+        complete('breed', active.textContent);
+      }
+    }
+
+    filters = _.extend(filters, {pet: {breed: theInput.value}});
+
+    swap('heros');
+    swap('views', 'results');
+    display(shelters);
   }
 }
 
@@ -202,7 +228,7 @@ function favorite(target, fave, _favorites) {
 
 function next(list, direction) {
   var active = list.getElementsByClassName('highlight')[0];
-  theChildren = list.childNodes;
+  var theChildren = list.childNodes;
 
 
   if (!active) {
