@@ -16,7 +16,7 @@ if (document.location.host) {
 
 
 $('#breed').on('input', suggest);
-$('#breed').on('blur', autoComplete);
+//$('#breed').on('blur', autoComplete);
 $('body').on('click', handleClick);
 $('body').on('submit', handleSubmit);
 $('body').keydown(handleKey);
