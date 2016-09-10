@@ -2,11 +2,11 @@
 var imagePlaceholder = 'data:image\/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9InllcyI\/PjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iMTQwIiBoZWlnaHQ9IjE0MCIgdmlld0JveD0iMCAwIDE0MCAxNDAiIHByZXNlcnZlQXNwZWN0UmF0aW89Im5vbmUiPjwhLS0KU291cmNlIFVSTDogaG9sZGVyLmpzLzE0MHgxNDAKQ3JlYXRlZCB3aXRoIEhvbGRlci5qcyAyLjYuMC4KTGVhcm4gbW9yZSBhdCBodHRwOi8vaG9sZGVyanMuY29tCihjKSAyMDEyLTIwMTUgSXZhbiBNYWxvcGluc2t5IC0gaHR0cDovL2ltc2t5LmNvCi0tPjxkZWZzPjxzdHlsZSB0eXBlPSJ0ZXh0L2NzcyI+PCFbQ0RBVEFbI2hvbGRlcl8xNTZkODRiYjUzMiB0ZXh0IHsgZmlsbDojQUFBQUFBO2ZvbnQtd2VpZ2h0OmJvbGQ7Zm9udC1mYW1pbHk6QXJpYWwsIEhlbHZldGljYSwgT3BlbiBTYW5zLCBzYW5zLXNlcmlmLCBtb25vc3BhY2U7Zm9udC1zaXplOjEwcHQgfSBdXT48L3N0eWxlPjwvZGVmcz48ZyBpZD0iaG9sZGVyXzE1NmQ4NGJiNTMyIj48cmVjdCB3aWR0aD0iMTQwIiBoZWlnaHQ9IjE0MCIgZmlsbD0iI0VFRUVFRSIvPjxnPjx0ZXh0IHg9IjQ0LjY4NzUiIHk9Ijc0LjM2NDA2MjUiPjE0MHgxNDA8L3RleHQ+PC9nPjwvZz48L3N2Zz4=';
 
 //begin gloabl variables
-var shelters = JSON.parse(data);
-var filters = {pet: {breed: ''}};
-var theMap = createMap('map', shelters[0]);
-var adoption = {requests: []};
-var favorites = [];
+var shelters = JSON.parse(data),
+    filters = {pet: {breed: ''}},
+    theMap = createMap('map', shelters[0]),
+    adoption = {requests: []},
+    favorites = [];
 
 if (document.location.host) {
   var imgHost = 'https://file.ac/T9IQIs9EMaE/';
@@ -92,7 +92,8 @@ function tab(theList, key) {
 
 function move(target, direction) {
   var theSibling = target.nextElementSibling;
-  if (theSibling.nodeName && theSibling.nodeName === 'UL') {
+
+  if (theSibling && theSibling.nodeName && theSibling.nodeName === 'UL') {
     if (target.nextElementSibling.hasChildNodes()) {
       var theNext = next(target.nextElementSibling, direction);
       theNext.classList.add('highlight');
@@ -104,8 +105,8 @@ function move(target, direction) {
 }
 
 function next(list, direction) {
-  var active = list.getElementsByClassName('highlight')[0];
-  var theChildren = list.childNodes;
+  var active = list.getElementsByClassName('highlight')[0],
+      theChildren = list.childNodes;
 
   if (!active) {
     return direction === 'down' ? list.firstElementChild
@@ -124,9 +125,9 @@ function next(list, direction) {
 }
 
 function handleClick(clicked) {
-  var action = '';
-  var content = '';
-  var target = clicked.target;
+  var action = '',
+      content = '',
+      target = clicked.target;
 
   while (!(target.hasAttribute('data-action')) && target.parentNode) {
     target = target.parentNode;
@@ -171,7 +172,7 @@ function handleClick(clicked) {
       modal(content, 'pet');
       break;
     case 'hide-modal':
-      set($('#modal-close')[0], {class: 'hidden'});
+      $('#modal-close').attr('class', 'hidden');
       $('body').removeClass('noscroll');
       break;
     case 'adopt':
@@ -184,9 +185,9 @@ function search(theForm) {
   var theInput = theForm.querySelector('#breed');
 
   if (theInput.value !== '') {
-    var theSibling = theInput.nextElementSibling;
+    var theSibling = $(theInput).next()[0];
     if (theSibling.nodeName === 'UL') {
-      var active = theSibling.getElementsByClassName('highlight')[0];
+      var active = $(theSibling).children('.highlight')[0];
       if (active) {
         complete('breed', active.textContent);
       }
@@ -212,10 +213,10 @@ function load(key) {
 function success(theForm, message) {
   var theParent = theForm.parentNode;
 
-  clear(theParent);
+  $(theParent).empty();
 
-  theParent.setAttribute('style', 'background-color: rgba(0,255,0,.1);');
-  theParent.appendChild(
+  $(theParent).attr('style', 'background-color: rgba(0,255,0,.1);');
+  $(theParent).append(
     element('h2', {class: 'success centered', style: 'color: darkgreen;'}, message)
   );
 }
@@ -237,19 +238,19 @@ function blur(e) {
 }
 
 function favorite(target, fave, _favorites) {
-  var id = target.getAttribute('data-content');
-  var theSpans = $('.favorite[data-content="' + id + '"]');
+  var id = target.getAttribute('data-content'),
+      theSpans = $('.favorite[data-content="' + id + '"]');
 
   if (fave) {
     _favorites.push(id);
     theSpans.each(function(span) {
-      set(this, {class: 'favorite glyphicon glyphicon-heart favorited', 'data-action': 'unfavorite'});
+      $(this).attr({class: 'favorite glyphicon glyphicon-heart favorited', 'data-action': 'unfavorite'});
     });
     target.addEventListener('mouseout', blur);
   } else {
     favorites = _.without(_favorites, id);
     theSpans.each(function(span) {
-      set(this, {class: 'favorite glyphicon glyphicon-heart', 'data-action': 'favorite'});
+      $(this).attr({class: 'favorite glyphicon glyphicon-heart', 'data-action': 'favorite'});
     });
     target.addEventListener('mouseout', blur);
   }
@@ -258,8 +259,8 @@ function favorite(target, fave, _favorites) {
 }
 
 function swap(area, view) {
-  var theArea = document.getElementById(area);
-  var theActive = theArea.getElementsByClassName('active')[0];
+  var theArea = document.getElementById(area),
+      theActive = theArea.getElementsByClassName('active')[0];
 
   if (theActive) {
     theActive.classList.remove('active');
@@ -273,12 +274,6 @@ function swap(area, view) {
   }
 }
 
-function set(theItem, attributes) {
-  _.each(attributes, function(value, key) {
-    this.setAttribute(key, value);
-  }, theItem);
-}
-
 function createMap(id, shelter) {
   var lat = shelter.latitude,
       long = shelter.longitude;
@@ -288,7 +283,7 @@ function createMap(id, shelter) {
     long = -117.74345;
   }
 
-  var  theMap = L.map(id).setView([lat, long], 15);
+  var theMap = L.map(id).setView([lat, long], 15);
 
   L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
     attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
@@ -452,7 +447,7 @@ function modal(data, view, keep) {
   }
 
   $('body').addClass('noscroll');
-  set($('#modal-close')[0], {class: ''});
+  $('#modal-close').removeClass('hidden');
 }
 
 function element(tag, attributes, contents) {
