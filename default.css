@@ -160,6 +160,10 @@ li.list-group-item.highlight {
   background-color: rgba(250,250,250,.9);
 }
 
+#breed:not(:focus) + ul {
+  display: none;
+}
+
 #map {
   height: 250px;
   top: -40px;
