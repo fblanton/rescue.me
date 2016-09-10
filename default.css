@@ -59,6 +59,7 @@ textarea {
 }
 
 .noscroll {
+  position: relative;
   overflow: hidden;
 }
 
