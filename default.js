@@ -8,6 +8,13 @@ var theMap = createMap('map', shelters[0]);
 var adoption = {requests: []};
 var favorites = [];
 
+if (document.location.host) {
+  var imgHost = 'https://file.ac/T9IQIs9EMaE/';
+} else {
+  var imgHost = '';
+}
+
+
 $('#breed').on('input', suggest);
 $('body').on('click', handleClick);
 $('body').on('submit', handleSubmit);
@@ -502,7 +509,7 @@ function cardTemplate(shelter, pet) {
     'data-action': 'show-animal',
     'data-content': JSON.stringify({shelterID: shelter.id, petID: pet.id}) },
     [ heartTemplate(pet, favorites),
-      element('div', {style: 'background-image: url(' + ('\'imgs/' + pet.type.toLowerCase() + 's/' + pet.image + '\')'), class: 'image'}),
+      element('div', {style: 'background-image: url(\'' + (imgHost + 'imgs/' + pet.type.toLowerCase() + 's/' + pet.image + '\')'), class: 'image'}),
       element('h3', {class: 'centered'}, pet.name),
       element('hr'),
       element('p', {}, pet.breed),
@@ -571,7 +578,7 @@ function petTemplate(shelter, pet) {
   return element('div', {class: 'jumbotron'}, [
     element('div', {class: 'col-sm-4'}, [
       heartTemplate(pet, favorites),
-      element('div', {style: 'background-image: url(' + ('\'imgs/' + pet.type.toLowerCase() + 's/' + pet.image + '\')'), class: 'image'}),
+      element('div', {style: 'background-image: url(\'' + (imgHost + 'imgs/' + pet.type.toLowerCase() + 's/' + pet.image + '\')'), class: 'image'}),
       element('h3', {class: 'centered'}, pet.name),
       element('p', {}, pet.breed + ' | ' + pet.gender),
       element('p', {}, 'Adoption Fee: $' + pet.fee),
