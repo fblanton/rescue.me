@@ -16,6 +16,7 @@ if (document.location.host) {
 
 
 $('#breed').on('input', suggest);
+$('#breed').on('blur', autoComplete);
 $('body').on('click', handleClick);
 $('body').on('submit', handleSubmit);
 $('body').keydown(handleKey);
@@ -298,6 +299,20 @@ function createMap(id, shelter) {
     '<h5 class=\'centered\'>' + shelter.name + '<h5>').openPopup();
 
   return theMap;
+}
+
+function autoComplete(element) {
+  theInput = element.target;
+
+  if (theInput && theInput.value !== '') {
+    var theSibling = $(theInput).next()[0];
+    if (theSibling.nodeName === 'UL') {
+      var active = $(theSibling).children('.highlight')[0];
+      if (active) {
+        complete('breed', active.textContent);
+      }
+    }
+  }
 }
 
 function complete(destination, content) {
