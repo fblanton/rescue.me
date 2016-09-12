@@ -22,9 +22,12 @@ Any favorites or adoption requests are stored in local storage so the demo site 
 * Bootstrap 3 and Bootstrapjs used for responsive design.
 * Local storage read and write used to provide memory to the demo web app.
 * jquery used to qucikly access DOM elements including the ability for a favoriting action in the modal dialog to also immediately update the favorite status in the main view.
+
 ---
 
-![useexample](https://cloud.githubusercontent.com/assets/3937557/18452418/98a4f270-78ef-11e6-91c0-c1fe2cfd6313.png)
+![useexample2](https://cloud.githubusercontent.com/assets/3937557/18452697/e06e9eca-78f0-11e6-8b50-7b826304d0db.gif)
+
+![useexample](https://cloud.githubusercontent.com/assets/3937557/18452713/ef0d589a-78f0-11e6-9dd6-0a2d9434e8a3.gif)
 
 ---
 ![jquery](https://cloud.githubusercontent.com/assets/3937557/18450949/e77484ac-78e9-11e6-824e-ab9fc91c87ed.png)
